@@ -14,6 +14,7 @@ interface Step2DetallesProps {
     tecnologias?: string[];
   }) => void;
   sugeridoPorIA?: boolean;
+  error?: string;
 }
 
 export function Step2Detalles({
@@ -23,6 +24,7 @@ export function Step2Detalles({
   tecnologias,
   onChange,
   sugeridoPorIA,
+  error,
 }: Step2DetallesProps) {
   const toggleTecnologia = (tech: string) => {
     const updated = tecnologias.includes(tech)
@@ -47,6 +49,7 @@ export function Step2Detalles({
         value={nombreProyecto}
         onChange={(e) => onChange({ nombre_proyecto: e.target.value })}
         placeholder="Mi proyecto web"
+        error={error}
       />
 
       <div>

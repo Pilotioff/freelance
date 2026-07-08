@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CotizacionesService } from './cotizaciones.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthService } from '../auth/auth.service';
+import { DivisasService } from '../divisas/divisas.service';
 import { NotFoundException } from '@nestjs/common';
 
 describe('CotizacionesService', () => {
@@ -45,6 +46,18 @@ describe('CotizacionesService', () => {
             obtenerPorId: jest.fn(() =>
               Promise.resolve({ id: 'user-1', tarifa_hora_cop: 150000 }),
             ),
+          },
+        },
+        {
+          provide: DivisasService,
+          useValue: {
+            convertir: jest.fn(({ valor, monedaDestino }) => ({
+              valor,
+              monedaOrigen: 'COP',
+              monedaDestino,
+              resultado: valor * 0.00025,
+              tasa: 0.00025,
+            })),
           },
         },
       ],

@@ -7,6 +7,7 @@ import { Spinner } from '../components/ui/Spinner';
 import { cotizacionesApi } from '../api/cotizaciones.api';
 import { Cotizacion, Complejidad } from '../types';
 import { formatCurrency } from '../utils/formatCurrency';
+import { DetalleCotizacionModal } from '../components/cotizador/DetalleCotizacionModal';
 
 export function Historial() {
   const [cotizaciones, setCotizaciones] = useState<Cotizacion[]>([]);
@@ -14,6 +15,7 @@ export function Historial() {
   const [error, setError] = useState<string | null>(null);
   const [busqueda, setBusqueda] = useState('');
   const [filtroComplejidad, setFiltroComplejidad] = useState<Complejidad | ''>('');
+  const [seleccionada, setSeleccionada] = useState<Cotizacion | null>(null);
 
   useEffect(() => {
     cotizacionesApi
@@ -64,7 +66,11 @@ export function Historial() {
           {filtradas.map((c) => {
             const hayConversion = c.moneda_seleccionada !== 'COP' && c.precio_convertido != null;
             return (
-              <Card key={c.id} className="hover:border-primary/50 transition">
+              <Card
+                key={c.id}
+                className="hover:border-primary/50 transition cursor-pointer"
+                onClick={() => setSeleccionada(c)}
+              >
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-foreground font-semibold truncate flex-1">{c.nombre_proyecto}</h3>
                   <Badge label={c.complejidad} variant={complejidadVariant(c.complejidad)} />
@@ -90,6 +96,8 @@ export function Historial() {
           })}
         </div>
       )}
+
+      <DetalleCotizacionModal cotizacion={seleccionada} onClose={() => setSeleccionada(null)} />
     </AppLayout>
   );
 }

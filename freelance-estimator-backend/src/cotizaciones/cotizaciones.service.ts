@@ -191,6 +191,22 @@ export class CotizacionesService {
     });
   }
 
+  async obtenerPorId(
+    usuarioId: string,
+    cotizacionId: string,
+  ): Promise<CotizacionConTecnologias | null> {
+    const cotizacion = await this.prisma.cotizacion.findUnique({
+      where: { id: cotizacionId },
+      include: { tecnologias: true },
+    });
+
+    if (!cotizacion || cotizacion.usuario_id !== usuarioId) {
+      return null;
+    }
+
+    return cotizacion;
+  }
+
   private async obtenerPeso(clave: string): Promise<number> {
     const peso = await this.prisma.pesoSistema.findUnique({ where: { clave } });
     if (!peso) {

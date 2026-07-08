@@ -1,4 +1,5 @@
 import { Complejidad } from '../../types';
+import { NivelComplejidad } from '../../utils/calcularComplejidad';
 
 interface BadgeProps {
   label: string;
@@ -29,4 +30,15 @@ export function complejidadVariant(complejidad: Complejidad): BadgeProps['varian
     alta: 'danger',
   };
   return map[complejidad];
+}
+
+export function nivelComplejidadVariant(nivel: NivelComplejidad): BadgeProps['variant'] {
+  const map: Record<NivelComplejidad, BadgeProps['variant']> = {
+    baja: 'success',
+    media: 'warning',
+    alta: 'danger',
+    muy_alta: 'danger',
+    extrema: 'danger',
+  };
+  return map[nivel];
 }

@@ -5,12 +5,14 @@ import { Spinner } from '../ui/Spinner';
 import { Cotizacion, CotizacionFormState, Moneda } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { TIPOS_PROYECTO, HOSTING_OPTIONS, TIEMPOS_ENTREGA, MONEDAS_DISPONIBLES } from '../../types';
+import { EstimacionCalculada } from '../../api/cotizaciones.api';
 
 interface Step4ResumenProps {
   form: CotizacionFormState;
   resultado: Cotizacion | null;
   loading: boolean;
   error: string | null;
+  estimacion: EstimacionCalculada | null;
   onConfirmar: () => void;
   onNueva: () => void;
   onChangeMoneda: (moneda: Moneda) => void;
@@ -21,6 +23,7 @@ export function Step4Resumen({
   resultado,
   loading,
   error,
+  estimacion,
   onConfirmar,
   onNueva,
   onChangeMoneda,
@@ -28,6 +31,28 @@ export function Step4Resumen({
   const tipoLabel = TIPOS_PROYECTO.find((t) => t.value === form.tipo_proyecto)?.label ?? form.tipo_proyecto;
   const hostingLabel = HOSTING_OPTIONS.find((h) => h.value === form.hosting)?.label ?? form.hosting;
   const tiempoLabel = TIEMPOS_ENTREGA.find((t) => t.value === form.tiempo_entrega)?.label ?? form.tiempo_entrega;
+
+  const desglose = resultado
+    ? {
+        diseno: resultado.costo_diseno ?? 0,
+        frontend: resultado.costo_frontend ?? 0,
+        backend: resultado.costo_backend ?? 0,
+        bd: resultado.costo_bd ?? 0,
+        infra: resultado.costo_infraestructura,
+        margen: resultado.margen_aplicado,
+        total: resultado.precio_final,
+      }
+    : estimacion
+      ? {
+          diseno: estimacion.costoDiseno,
+          frontend: estimacion.costoFrontend,
+          backend: estimacion.costoBackend,
+          bd: estimacion.costoBd,
+          infra: estimacion.costoInfra,
+          margen: estimacion.margenPerfil,
+          total: estimacion.precioFinal,
+        }
+      : null;
 
   if (resultado) {
     const hayConversion = resultado.moneda_seleccionada !== 'COP' && resultado.precio_convertido != null;
@@ -52,6 +77,14 @@ export function Step4Resumen({
           <p className="text-muted text-sm">Rango estimado por IA (mockup)</p>
         )}
         <Badge label={resultado.complejidad} variant={complejidadVariant(resultado.complejidad)} />
+
+        {desglose && (
+          <div className="text-left max-w-sm mx-auto pt-4 border-t border-slate-700/50">
+            <h4 className="text-muted text-sm font-medium mb-3">Desglose del costo</h4>
+            <DesgloseTabla desglose={desglose} />
+          </div>
+        )}
+
         <Button onClick={onNueva} variant="secondary">Nueva cotización</Button>
       </div>
     );
@@ -112,6 +145,13 @@ export function Step4Resumen({
         </Card>
       </div>
 
+      {desglose && (
+        <Card className="mt-6">
+          <h4 className="text-muted text-sm font-medium mb-4">Desglose completo del costo</h4>
+          <DesgloseTabla desglose={desglose} />
+        </Card>
+      )}
+
       <div className="mt-6">
         <label className="text-sm font-medium text-muted mb-2 block">Moneda del presupuesto</label>
         <select
@@ -144,5 +184,50 @@ export function Step4Resumen({
         </Button>
       </div>
     </div>
+  );
+}
+
+interface Desglose {
+  diseno: number;
+  frontend: number;
+  backend: number;
+  bd: number;
+  infra: number;
+  margen: number;
+  total: number;
+}
+
+function DesgloseTabla({ desglose }: { desglose: Desglose }) {
+  const filas: { label: string; valor: number }[] = [
+    { label: 'Diseño', valor: desglose.diseno },
+    { label: 'Frontend', valor: desglose.frontend },
+    { label: 'Backend', valor: desglose.backend },
+    { label: 'Base de datos', valor: desglose.bd },
+    { label: 'Infraestructura / Hosting', valor: desglose.infra },
+  ];
+
+  const subtotal = desglose.diseno + desglose.frontend + desglose.backend + desglose.bd + desglose.infra;
+
+  return (
+    <dl className="space-y-2 text-sm">
+      {filas.map((f) => (
+        <div key={f.label} className="flex justify-between">
+          <dt className="text-muted">{f.label}</dt>
+          <dd className="text-foreground">{formatCurrency(f.valor)}</dd>
+        </div>
+      ))}
+      <div className="flex justify-between pt-2 border-t border-slate-700/50">
+        <dt className="text-muted">Subtotal</dt>
+        <dd className="text-foreground">{formatCurrency(subtotal)}</dd>
+      </div>
+      <div className="flex justify-between">
+        <dt className="text-muted">Margen aplicado</dt>
+        <dd className="text-foreground">×{desglose.margen.toFixed(2)}</dd>
+      </div>
+      <div className="flex justify-between pt-2 border-t border-slate-700/50 font-bold">
+        <dt className="text-foreground">TOTAL</dt>
+        <dd className="text-primary">{formatCurrency(desglose.total)}</dd>
+      </div>
+    </dl>
   );
 }

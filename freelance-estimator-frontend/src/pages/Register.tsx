@@ -13,7 +13,6 @@ interface RegisterForm {
   email: string;
   password: string;
   empresa?: string;
-  tarifa_hora_cop?: number;
 }
 
 export function Register() {
@@ -78,12 +77,11 @@ export function Register() {
             label="Empresa (opcional)"
             {...register('empresa')}
           />
-          <Input
-            label="Tarifa por hora COP (opcional)"
-            type="number"
-            placeholder="150000"
-            {...register('tarifa_hora_cop', { valueAsNumber: true })}
-          />
+
+          <p className="text-muted text-xs">
+            Tu tarifa por hora se calculará automáticamente según tu evaluación de experiencia
+            técnica, justo después de registrarte.
+          </p>
 
           {errors.root && (
             <p className="text-danger text-sm text-center">{errors.root.message}</p>

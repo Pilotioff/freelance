@@ -49,6 +49,11 @@ export class CotizacionesService {
     private readonly divisasService: DivisasService,
   ) {}
 
+  private async obtenerTarifaHora(usuarioId: string): Promise<number> {
+    const usuario = await this.authService.obtenerPorId(usuarioId);
+    return usuario?.tarifa_hora_sugerida ?? usuario?.tarifa_hora_cop ?? 150000;
+  }
+
   async calcular(datos: DatosParaCalculo): Promise<CalculoCotizacion> {
     const horasBase = await this.obtenerPeso(`${datos.tipo_proyecto}_base_hours`);
     const multDiseno = await this.obtenerPeso(`design_${datos.nivel_disenio}`);
@@ -84,8 +89,7 @@ export class CotizacionesService {
   }
 
   async estimar(usuarioId: string, dto: EstimarCotizacionDto): Promise<CalculoCotizacion> {
-    const usuario = await this.authService.obtenerPorId(usuarioId);
-    const tarifaHora = usuario?.tarifa_hora_cop ?? 150000;
+    const tarifaHora = await this.obtenerTarifaHora(usuarioId);
 
     return this.calcular({
       tipo_proyecto: dto.tipo_proyecto,
@@ -99,8 +103,7 @@ export class CotizacionesService {
   }
 
   async crear(usuarioId: string, dto: CrearCotizacionDto): Promise<CotizacionConTecnologias> {
-    const usuario = await this.authService.obtenerPorId(usuarioId);
-    const tarifaHora = usuario?.tarifa_hora_cop ?? 150000;
+    const tarifaHora = await this.obtenerTarifaHora(usuarioId);
 
     const calculo = await this.calcular({
       tipo_proyecto: dto.tipo_proyecto,

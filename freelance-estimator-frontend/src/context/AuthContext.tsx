@@ -17,6 +17,7 @@ interface AuthContextValue {
     tarifa_hora_cop?: number;
   }) => Promise<void>;
   logout: () => Promise<void>;
+  refrescarUsuario: () => Promise<void>;
   isAdmin: boolean;
 }
 
@@ -85,6 +86,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUsuario(null);
   };
 
+  const refrescarUsuario = async (): Promise<void> => {
+    await checkAuth();
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -94,6 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         registro,
         logout,
+        refrescarUsuario,
         isAdmin: usuario?.rol === 'ADMIN',
       }}
     >

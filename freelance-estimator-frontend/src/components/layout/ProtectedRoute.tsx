@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Spinner } from '../ui/Spinner';
+import { OnboardingModal } from '../onboarding/OnboardingModal';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, adminOnly = false }: ProtectedRouteProps) {
-  const { usuario, loading, isAdmin } = useAuth();
+  const { usuario, loading, isAdmin, refrescarUsuario } = useAuth();
 
   if (loading) {
     return (
@@ -20,6 +21,10 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
 
   if (!usuario) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!usuario.onboarding_completado) {
+    return <OnboardingModal onCompletado={refrescarUsuario} />;
   }
 
   if (adminOnly && !isAdmin) {

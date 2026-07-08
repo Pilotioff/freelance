@@ -12,6 +12,7 @@ export type Moneda = 'COP' | 'USD' | 'EUR' | 'GBP' | 'JPY';
 export type PerfilCliente =
   | 'estudiante' | 'freelancer' | 'emprendedor' | 'startup'
   | 'empresa_pequena' | 'empresa_mediana' | 'empresa_grande' | 'gobierno' | 'ong';
+export type TarifaPreferida = 'manual' | 'sugerida';
 
 export interface Usuario {
   id: string;
@@ -23,6 +24,9 @@ export interface Usuario {
   telefono?: string;
   tarifa_hora_cop?: number;
   avatar_url?: string;
+  onboarding_completado: boolean;
+  tarifa_hora_sugerida?: number;
+  tarifa_preferida?: TarifaPreferida;
 }
 
 export interface ApiResponse<T> {
@@ -218,3 +222,13 @@ export const PERFILES_CLIENTE: { value: PerfilCliente; label: string }[] = [
   { value: 'gobierno', label: 'Gobierno' },
   { value: 'ong', label: 'ONG' },
 ];
+
+export interface ResultadoEvaluacion {
+  nivel_detectado: string;
+  promedio_general: number;
+  promedio_por_categoria: Record<string, number>;
+  tarifa_sugerida_cop: number;
+  fortalezas: string[];
+  areas_mejora: string[];
+  confianza: number;
+}

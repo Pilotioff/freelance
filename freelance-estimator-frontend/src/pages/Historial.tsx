@@ -61,23 +61,33 @@ export function Historial() {
         <p className="text-muted text-center py-20">No hay cotizaciones aún</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtradas.map((c) => (
-            <Card key={c.id} className="hover:border-primary/50 transition">
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-foreground font-semibold truncate flex-1">{c.nombre_proyecto}</h3>
-                <Badge label={c.complejidad} variant={complejidadVariant(c.complejidad)} />
-              </div>
-              <p className="text-muted text-sm capitalize">{c.tipo_proyecto}</p>
-              <p className="text-ia text-xl font-bold mt-3">{formatCurrency(c.precio_final)}</p>
-              <div className="flex justify-between text-xs text-muted mt-3 pt-3 border-t border-slate-700">
-                <span>{c.horas_estimadas}h estimadas</span>
-                <span>{new Date(c.creado_en).toLocaleDateString('es-CO')}</span>
-              </div>
-              {c.generado_por_ia && (
-                <span className="text-ia text-xs mt-2 block">✨ Generado por IA</span>
-              )}
-            </Card>
-          ))}
+          {filtradas.map((c) => {
+            const hayConversion = c.moneda_seleccionada !== 'COP' && c.precio_convertido != null;
+            return (
+              <Card key={c.id} className="hover:border-primary/50 transition">
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-foreground font-semibold truncate flex-1">{c.nombre_proyecto}</h3>
+                  <Badge label={c.complejidad} variant={complejidadVariant(c.complejidad)} />
+                </div>
+                <p className="text-muted text-sm capitalize">{c.tipo_proyecto}</p>
+                <p className="text-ia text-xl font-bold mt-3">
+                  {hayConversion
+                    ? formatCurrency(c.precio_convertido as number, c.moneda_seleccionada)
+                    : formatCurrency(c.precio_final)}
+                </p>
+                {hayConversion && (
+                  <p className="text-muted text-xs mt-1">{formatCurrency(c.precio_final)} COP</p>
+                )}
+                <div className="flex justify-between text-xs text-muted mt-3 pt-3 border-t border-slate-700">
+                  <span>{c.horas_estimadas}h estimadas</span>
+                  <span>{new Date(c.creado_en).toLocaleDateString('es-CO')}</span>
+                </div>
+                {c.generado_por_ia && (
+                  <span className="text-ia text-xs mt-2 block">✨ Generado por IA</span>
+                )}
+              </Card>
+            );
+          })}
         </div>
       )}
     </AppLayout>

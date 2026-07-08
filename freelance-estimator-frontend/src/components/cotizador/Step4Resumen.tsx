@@ -2,9 +2,9 @@ import { Card } from '../ui/Card';
 import { Badge, complejidadVariant } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { Spinner } from '../ui/Spinner';
-import { Cotizacion, CotizacionFormState } from '../../types';
+import { Cotizacion, CotizacionFormState, Moneda } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { TIPOS_PROYECTO, HOSTING_OPTIONS, TIEMPOS_ENTREGA } from '../../types';
+import { TIPOS_PROYECTO, HOSTING_OPTIONS, TIEMPOS_ENTREGA, MONEDAS_DISPONIBLES } from '../../types';
 
 interface Step4ResumenProps {
   form: CotizacionFormState;
@@ -13,6 +13,7 @@ interface Step4ResumenProps {
   error: string | null;
   onConfirmar: () => void;
   onNueva: () => void;
+  onChangeMoneda: (moneda: Moneda) => void;
 }
 
 export function Step4Resumen({
@@ -22,12 +23,15 @@ export function Step4Resumen({
   error,
   onConfirmar,
   onNueva,
+  onChangeMoneda,
 }: Step4ResumenProps) {
   const tipoLabel = TIPOS_PROYECTO.find((t) => t.value === form.tipo_proyecto)?.label ?? form.tipo_proyecto;
   const hostingLabel = HOSTING_OPTIONS.find((h) => h.value === form.hosting)?.label ?? form.hosting;
   const tiempoLabel = TIEMPOS_ENTREGA.find((t) => t.value === form.tiempo_entrega)?.label ?? form.tiempo_entrega;
 
   if (resultado) {
+    const hayConversion = resultado.moneda_seleccionada !== 'COP' && resultado.precio_convertido != null;
+
     return (
       <div className="text-center space-y-6">
         <div className="text-success text-5xl">✓</div>
@@ -35,8 +39,15 @@ export function Step4Resumen({
         <p className="text-ia text-4xl font-bold">
           {form.esMockup && form.rango_estimado
             ? `${formatCurrency(form.rango_estimado.minimo_cop)} – ${formatCurrency(form.rango_estimado.maximo_cop)}`
-            : formatCurrency(resultado.precio_final)}
+            : hayConversion
+              ? formatCurrency(resultado.precio_convertido as number, resultado.moneda_seleccionada)
+              : formatCurrency(resultado.precio_final)}
         </p>
+        {hayConversion && (
+          <p className="text-muted text-sm">
+            Equivale a {formatCurrency(resultado.precio_final)} (tasa usada: {resultado.tasa_cambio_usada})
+          </p>
+        )}
         {form.esMockup && form.rango_estimado && (
           <p className="text-muted text-sm">Rango estimado por IA (mockup)</p>
         )}
@@ -99,6 +110,21 @@ export function Step4Resumen({
             )}
           </dl>
         </Card>
+      </div>
+
+      <div className="mt-6">
+        <label className="text-sm font-medium text-muted mb-2 block">Moneda del presupuesto</label>
+        <select
+          value={form.moneda_seleccionada}
+          onChange={(e) => onChangeMoneda(e.target.value as Moneda)}
+          className="w-full px-4 py-2.5 bg-background border border-slate-600 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          {MONEDAS_DISPONIBLES.map((m) => (
+            <option key={m.value} value={m.value}>
+              {m.simbolo} {m.value} — {m.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {form.esMockup && form.rango_estimado && (

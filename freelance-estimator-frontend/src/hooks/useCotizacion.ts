@@ -22,6 +22,7 @@ const INITIAL_STATE: CotizacionFormState = {
   generado_por_ia: false,
   supuestos: [],
   esMockup: false,
+  moneda_seleccionada: 'COP',
 };
 
 export function useCotizacion() {
@@ -72,6 +73,7 @@ export function useCotizacion() {
       hosting: form.hosting as Hosting,
       generado_por_ia: form.generado_por_ia,
       confianza_ia: form.confianza_ia,
+      moneda_seleccionada: form.moneda_seleccionada,
     };
 
     try {

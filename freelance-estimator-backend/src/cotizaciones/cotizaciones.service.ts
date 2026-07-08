@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CrearCotizacionDto } from './dto/crear-cotizacion.dto';
 import { Cotizacion, Prisma } from '@prisma/client';
 import { AuthService } from '../auth/auth.service';
+import { DivisasService, Moneda } from '../divisas/divisas.service';
 
 export interface CotizacionConTecnologias extends Cotizacion {
   tecnologias: { id: string; tecnologia: string }[];
@@ -19,6 +20,7 @@ export class CotizacionesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
+    private readonly divisasService: DivisasService,
   ) {}
 
   async crear(usuarioId: string, dto: CrearCotizacionDto): Promise<CotizacionConTecnologias> {
@@ -34,6 +36,20 @@ export class CotizacionesService {
     const precioFinal =
       horasEstimadas * tarifaHora * dto.cantidad_desarrolladores + costoInfra;
     const complejidad = this.calcularComplejidad(horasEstimadas);
+
+    const monedaSeleccionada = dto.moneda_seleccionada ?? 'COP';
+    let precioConvertido: number | null = null;
+    let tasaCambioUsada: number | null = null;
+
+    if (monedaSeleccionada !== 'COP') {
+      const conversion = this.divisasService.convertir({
+        valor: precioFinal,
+        monedaOrigen: 'COP',
+        monedaDestino: monedaSeleccionada as Moneda,
+      });
+      precioConvertido = conversion.resultado;
+      tasaCambioUsada = conversion.tasa;
+    }
 
     const cotizacion = await this.prisma.cotizacion.create({
       data: {
@@ -51,6 +67,9 @@ export class CotizacionesService {
         complejidad,
         generado_por_ia: dto.generado_por_ia ?? false,
         confianza_ia: dto.confianza_ia,
+        moneda_seleccionada: monedaSeleccionada,
+        precio_convertido: precioConvertido,
+        tasa_cambio_usada: tasaCambioUsada,
         tecnologias: {
           create: dto.tecnologias.map((t) => ({ tecnologia: t })),
         },

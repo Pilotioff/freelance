@@ -17,6 +17,7 @@ const TIPOS_PROYECTO = ['landing', 'ecommerce', 'webapp', 'mobile', 'api', 'dash
 const NIVELES_DISENIO = ['basico', 'intermedio', 'premium', 'animado'] as const;
 const TIEMPOS_ENTREGA = ['1semana', '2semanas', '1mes', 'mas1mes'] as const;
 const HOSTING_OPTIONS = ['ninguno', 'basico', 'vps', 'cloud'] as const;
+const MONEDAS = ['COP', 'USD', 'EUR', 'GBP', 'JPY'] as const;
 
 export class CrearCotizacionDto {
   @ApiProperty({ example: 'Mi Proyecto Web' })
@@ -70,4 +71,9 @@ export class CrearCotizacionDto {
   @Min(0)
   @Max(1)
   confianza_ia?: number;
+
+  @ApiPropertyOptional({ example: 'USD', enum: MONEDAS })
+  @IsOptional()
+  @IsIn([...MONEDAS], { message: 'Selecciona una moneda válida' })
+  moneda_seleccionada?: string;
 }

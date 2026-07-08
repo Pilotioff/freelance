@@ -23,6 +23,9 @@ model Cotizacion {
   complejidad              String
   generado_por_ia          Boolean                @default(false)
   confianza_ia             Float?
+  moneda_seleccionada      String                 @default("COP")
+  precio_convertido        Float?
+  tasa_cambio_usada        Float?
   creado_en                DateTime               @default(now())
   tecnologias              CotizacionTecnologia[]
 }

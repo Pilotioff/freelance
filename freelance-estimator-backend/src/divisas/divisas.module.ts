@@ -5,5 +5,6 @@ import { DivisasService } from './divisas.service';
 @Module({
   controllers: [DivisasController],
   providers: [DivisasService],
+  exports: [DivisasService],
 })
 export class DivisasModule {}

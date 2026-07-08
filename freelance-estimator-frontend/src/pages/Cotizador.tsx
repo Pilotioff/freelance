@@ -134,6 +134,7 @@ export function Cotizador() {
             error={error}
             onConfirmar={crearCotizacion}
             onNueva={() => { resetForm(); ia.reset(); setModo('seleccion'); setPaso(0); }}
+            onChangeMoneda={(moneda) => updateForm({ moneda_seleccionada: moneda })}
           />
         )}
 

@@ -4,6 +4,7 @@ export type TiempoEntrega = '1semana' | '2semanas' | '1mes' | 'mas1mes';
 export type Hosting = 'ninguno' | 'basico' | 'vps' | 'cloud';
 export type Complejidad = 'baja' | 'media' | 'alta';
 export type Rol = 'USER' | 'ADMIN';
+export type Moneda = 'COP' | 'USD' | 'EUR' | 'GBP' | 'JPY';
 
 export interface Usuario {
   id: string;
@@ -59,6 +60,9 @@ export interface Cotizacion {
   complejidad: Complejidad;
   generado_por_ia: boolean;
   confianza_ia?: number;
+  moneda_seleccionada: string;
+  precio_convertido?: number | null;
+  tasa_cambio_usada?: number | null;
   creado_en: string;
   tecnologias: { id: string; tecnologia: string }[];
 }
@@ -74,6 +78,7 @@ export interface CrearCotizacionPayload {
   hosting: Hosting;
   generado_por_ia?: boolean;
   confianza_ia?: number;
+  moneda_seleccionada?: Moneda;
 }
 
 export interface DashboardResumen {
@@ -127,6 +132,7 @@ export interface CotizacionFormState {
   rango_estimado?: RangoEstimado;
   supuestos: string[];
   esMockup: boolean;
+  moneda_seleccionada: Moneda;
 }
 
 export const TIPOS_PROYECTO: { value: TipoProyecto; label: string; icon: string }[] = [
@@ -162,4 +168,12 @@ export const TIEMPOS_ENTREGA: { value: TiempoEntrega; label: string }[] = [
 export const TECNOLOGIAS_SUGERIDAS = [
   'React', 'Vue', 'Angular', 'Next.js', 'Node.js', 'Python', 'Django',
   'PostgreSQL', 'MongoDB', 'TypeScript', 'Tailwind', 'Flutter', 'React Native',
+];
+
+export const MONEDAS_DISPONIBLES: { value: Moneda; label: string; simbolo: string }[] = [
+  { value: 'COP', label: 'Peso Colombiano', simbolo: '$' },
+  { value: 'USD', label: 'Dólar Americano', simbolo: '$' },
+  { value: 'EUR', label: 'Euro', simbolo: '€' },
+  { value: 'GBP', label: 'Libra Esterlina', simbolo: '£' },
+  { value: 'JPY', label: 'Yen Japonés', simbolo: '¥' },
 ];

@@ -4,12 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#111827',
-        card: '#1F2937',
+        background: '#0A0A0A',
+        card: '#18181B',
         primary: '#F5B700',
         ia: '#10B981',
         foreground: '#FFFFFF',
-        muted: '#9CA3AF',
+        muted: '#A1A1AA',
         success: '#22C55E',
         warning: '#FB923C',
         danger: '#EF4444',

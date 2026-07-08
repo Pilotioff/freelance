@@ -26,6 +26,12 @@ model Cotizacion {
   moneda_seleccionada      String                 @default("COP")
   precio_convertido        Float?
   tasa_cambio_usada        Float?
+  perfil_cliente           String                 @default("emprendedor")
+  margen_aplicado          Float                  @default(1)
+  costo_diseno             Float?
+  costo_frontend           Float?
+  costo_backend            Float?
+  costo_bd                 Float?
   creado_en                DateTime               @default(now())
   tecnologias              CotizacionTecnologia[]
 }

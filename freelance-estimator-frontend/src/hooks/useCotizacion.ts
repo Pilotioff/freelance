@@ -5,6 +5,7 @@ import {
   NivelDisenio,
   TiempoEntrega,
   Hosting,
+  PerfilCliente,
   CrearCotizacionPayload,
   Cotizacion,
 } from '../types';
@@ -23,6 +24,7 @@ const INITIAL_STATE: CotizacionFormState = {
   supuestos: [],
   esMockup: false,
   moneda_seleccionada: 'COP',
+  perfil_cliente: 'emprendedor',
 };
 
 export function useCotizacion() {
@@ -58,6 +60,10 @@ export function useCotizacion() {
       setError('Selecciona un tiempo de entrega');
       return null;
     }
+    if (!form.perfil_cliente) {
+      setError('Selecciona un perfil de cliente');
+      return null;
+    }
 
     setLoading(true);
     setError(null);
@@ -74,6 +80,7 @@ export function useCotizacion() {
       generado_por_ia: form.generado_por_ia,
       confianza_ia: form.confianza_ia,
       moneda_seleccionada: form.moneda_seleccionada,
+      perfil_cliente: form.perfil_cliente as PerfilCliente,
     };
 
     try {

@@ -91,14 +91,14 @@ export function Dashboard() {
           <h3 className="text-foreground font-semibold mb-4">Cotizaciones por mes</h3>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={resumen.cotizaciones_por_mes}>
-              <XAxis dataKey="mes" tick={{ fill: '#94A3B8', fontSize: 12 }} />
-              <YAxis tick={{ fill: '#94A3B8', fontSize: 12 }} />
+              <XAxis dataKey="mes" tick={{ fill: '#A1A1AA', fontSize: 12 }} />
+              <YAxis tick={{ fill: '#A1A1AA', fontSize: 12 }} />
               <Tooltip
-                contentStyle={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 8 }}
-                labelStyle={{ color: '#F8FAFC' }}
-                cursor={{ fill: 'rgba(37, 99, 235, 0.1)' }}
+                contentStyle={{ background: '#18181B', border: '1px solid #3F3F46', borderRadius: 8 }}
+                labelStyle={{ color: '#FFFFFF' }}
+                cursor={{ fill: 'rgba(245, 183, 0, 0.1)' }}
               />
-              <Bar dataKey="cantidad" fill="#2563EB" radius={[4, 4, 0, 0]} activeBar={{ fill: '#10B981' }} />
+              <Bar dataKey="cantidad" fill="#F5B700" radius={[4, 4, 0, 0]} activeBar={{ fill: '#FB923C' }} />
             </BarChart>
           </ResponsiveContainer>
         </Card>

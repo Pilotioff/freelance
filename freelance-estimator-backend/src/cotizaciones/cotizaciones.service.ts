@@ -4,6 +4,7 @@ import { CrearCotizacionDto } from './dto/crear-cotizacion.dto';
 import { Cotizacion, Prisma } from '@prisma/client';
 import { AuthService } from '../auth/auth.service';
 import { DivisasService, Moneda } from '../divisas/divisas.service';
+import { obtenerArquetipo } from './arquetipos';
 
 export interface CotizacionConTecnologias extends Cotizacion {
   tecnologias: { id: string; tecnologia: string }[];
@@ -31,11 +32,24 @@ export class CotizacionesService {
     const multDiseno = await this.obtenerPeso(`design_${dto.nivel_disenio}`);
     const multTiempo = await this.obtenerPeso(`delivery_${dto.tiempo_entrega}`);
     const costoInfra = await this.obtenerPeso(`hosting_${dto.hosting}`);
+    const margenPerfil = await this.obtenerPeso(`margen_${dto.perfil_cliente}`);
+
+    const arquetipo = obtenerArquetipo(dto.tipo_proyecto);
+    const pctDiseno = await this.obtenerPeso(`desglose_${arquetipo}_diseno`);
+    const pctFrontend = await this.obtenerPeso(`desglose_${arquetipo}_frontend`);
+    const pctBackend = await this.obtenerPeso(`desglose_${arquetipo}_backend`);
+    const pctBd = await this.obtenerPeso(`desglose_${arquetipo}_bd`);
 
     const horasEstimadas = horasBase * multDiseno * multTiempo;
-    const precioFinal =
-      horasEstimadas * tarifaHora * dto.cantidad_desarrolladores + costoInfra;
+    const costoDesarrollo = horasEstimadas * tarifaHora * dto.cantidad_desarrolladores;
+    const precioSinMargen = costoDesarrollo + costoInfra;
+    const precioFinal = precioSinMargen * margenPerfil;
     const complejidad = this.calcularComplejidad(horasEstimadas);
+
+    const costoDiseno = costoDesarrollo * pctDiseno;
+    const costoFrontend = costoDesarrollo * pctFrontend;
+    const costoBackend = costoDesarrollo * pctBackend;
+    const costoBd = costoDesarrollo * pctBd;
 
     const monedaSeleccionada = dto.moneda_seleccionada ?? 'COP';
     let precioConvertido: number | null = null;
@@ -70,6 +84,12 @@ export class CotizacionesService {
         moneda_seleccionada: monedaSeleccionada,
         precio_convertido: precioConvertido,
         tasa_cambio_usada: tasaCambioUsada,
+        perfil_cliente: dto.perfil_cliente,
+        margen_aplicado: margenPerfil,
+        costo_diseno: costoDiseno,
+        costo_frontend: costoFrontend,
+        costo_backend: costoBackend,
+        costo_bd: costoBd,
         tecnologias: {
           create: dto.tecnologias.map((t) => ({ tecnologia: t })),
         },

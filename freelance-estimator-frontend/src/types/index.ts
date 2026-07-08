@@ -1,10 +1,17 @@
-export type TipoProyecto = 'landing' | 'ecommerce' | 'webapp' | 'mobile' | 'api' | 'dashboard';
+export type TipoProyecto =
+  | 'landing' | 'ecommerce' | 'webapp' | 'mobile' | 'api' | 'dashboard'
+  | 'crm' | 'erp' | 'marketplace' | 'saas' | 'sistema_interno' | 'blog'
+  | 'portafolio' | 'chat' | 'automatizacion' | 'pos' | 'lms' | 'ia'
+  | 'microservicios' | 'sistema_administrativo';
 export type NivelDisenio = 'basico' | 'intermedio' | 'premium' | 'animado';
 export type TiempoEntrega = '1semana' | '2semanas' | '1mes' | 'mas1mes';
 export type Hosting = 'ninguno' | 'basico' | 'vps' | 'cloud';
 export type Complejidad = 'baja' | 'media' | 'alta';
 export type Rol = 'USER' | 'ADMIN';
 export type Moneda = 'COP' | 'USD' | 'EUR' | 'GBP' | 'JPY';
+export type PerfilCliente =
+  | 'estudiante' | 'freelancer' | 'emprendedor' | 'startup'
+  | 'empresa_pequena' | 'empresa_mediana' | 'empresa_grande' | 'gobierno' | 'ong';
 
 export interface Usuario {
   id: string;
@@ -63,6 +70,12 @@ export interface Cotizacion {
   moneda_seleccionada: string;
   precio_convertido?: number | null;
   tasa_cambio_usada?: number | null;
+  perfil_cliente: string;
+  margen_aplicado: number;
+  costo_diseno?: number | null;
+  costo_frontend?: number | null;
+  costo_backend?: number | null;
+  costo_bd?: number | null;
   creado_en: string;
   tecnologias: { id: string; tecnologia: string }[];
 }
@@ -79,6 +92,7 @@ export interface CrearCotizacionPayload {
   generado_por_ia?: boolean;
   confianza_ia?: number;
   moneda_seleccionada?: Moneda;
+  perfil_cliente: PerfilCliente;
 }
 
 export interface DashboardResumen {
@@ -133,6 +147,7 @@ export interface CotizacionFormState {
   supuestos: string[];
   esMockup: boolean;
   moneda_seleccionada: Moneda;
+  perfil_cliente: PerfilCliente | '';
 }
 
 export const TIPOS_PROYECTO: { value: TipoProyecto; label: string; icon: string }[] = [
@@ -142,6 +157,20 @@ export const TIPOS_PROYECTO: { value: TipoProyecto; label: string; icon: string 
   { value: 'mobile', label: 'Mobile App', icon: '📱' },
   { value: 'api', label: 'API / Backend', icon: '⚙️' },
   { value: 'dashboard', label: 'Dashboard', icon: '📊' },
+  { value: 'crm', label: 'CRM', icon: '🤝' },
+  { value: 'erp', label: 'ERP', icon: '🏭' },
+  { value: 'marketplace', label: 'Marketplace', icon: '🛍️' },
+  { value: 'saas', label: 'SaaS', icon: '☁️' },
+  { value: 'sistema_interno', label: 'Sistema interno', icon: '🗂️' },
+  { value: 'blog', label: 'Blog', icon: '📝' },
+  { value: 'portafolio', label: 'Portafolio', icon: '🎨' },
+  { value: 'chat', label: 'Chat', icon: '💬' },
+  { value: 'automatizacion', label: 'Automatización', icon: '🤖' },
+  { value: 'pos', label: 'POS', icon: '🧾' },
+  { value: 'lms', label: 'LMS', icon: '🎓' },
+  { value: 'ia', label: 'IA', icon: '🧠' },
+  { value: 'microservicios', label: 'Microservicios', icon: '🧩' },
+  { value: 'sistema_administrativo', label: 'Sistema administrativo', icon: '📋' },
 ];
 
 export const NIVELES_DISENIO: { value: NivelDisenio; label: string }[] = [
@@ -176,4 +205,16 @@ export const MONEDAS_DISPONIBLES: { value: Moneda; label: string; simbolo: strin
   { value: 'EUR', label: 'Euro', simbolo: '€' },
   { value: 'GBP', label: 'Libra Esterlina', simbolo: '£' },
   { value: 'JPY', label: 'Yen Japonés', simbolo: '¥' },
+];
+
+export const PERFILES_CLIENTE: { value: PerfilCliente; label: string }[] = [
+  { value: 'estudiante', label: 'Estudiante' },
+  { value: 'freelancer', label: 'Freelancer' },
+  { value: 'emprendedor', label: 'Emprendedor' },
+  { value: 'startup', label: 'Startup' },
+  { value: 'empresa_pequena', label: 'Empresa pequeña' },
+  { value: 'empresa_mediana', label: 'Empresa mediana' },
+  { value: 'empresa_grande', label: 'Empresa grande' },
+  { value: 'gobierno', label: 'Gobierno' },
+  { value: 'ong', label: 'ONG' },
 ];

@@ -1,0 +1,122 @@
+import { Card } from '../ui/Card';
+import { Badge, complejidadVariant } from '../ui/Badge';
+import { Button } from '../ui/Button';
+import { Spinner } from '../ui/Spinner';
+import { Cotizacion, CotizacionFormState } from '../../types';
+import { formatCurrency } from '../../utils/formatCurrency';
+import { TIPOS_PROYECTO, HOSTING_OPTIONS, TIEMPOS_ENTREGA } from '../../types';
+
+interface Step4ResumenProps {
+  form: CotizacionFormState;
+  resultado: Cotizacion | null;
+  loading: boolean;
+  error: string | null;
+  onConfirmar: () => void;
+  onNueva: () => void;
+}
+
+export function Step4Resumen({
+  form,
+  resultado,
+  loading,
+  error,
+  onConfirmar,
+  onNueva,
+}: Step4ResumenProps) {
+  const tipoLabel = TIPOS_PROYECTO.find((t) => t.value === form.tipo_proyecto)?.label ?? form.tipo_proyecto;
+  const hostingLabel = HOSTING_OPTIONS.find((h) => h.value === form.hosting)?.label ?? form.hosting;
+  const tiempoLabel = TIEMPOS_ENTREGA.find((t) => t.value === form.tiempo_entrega)?.label ?? form.tiempo_entrega;
+
+  if (resultado) {
+    return (
+      <div className="text-center space-y-6">
+        <div className="text-success text-5xl">✓</div>
+        <h3 className="text-foreground text-2xl font-bold">¡Cotización creada!</h3>
+        <p className="text-ia text-4xl font-bold">
+          {form.esMockup && form.rango_estimado
+            ? `${formatCurrency(form.rango_estimado.minimo_cop)} – ${formatCurrency(form.rango_estimado.maximo_cop)}`
+            : formatCurrency(resultado.precio_final)}
+        </p>
+        {form.esMockup && form.rango_estimado && (
+          <p className="text-muted text-sm">Rango estimado por IA (mockup)</p>
+        )}
+        <Badge label={resultado.complejidad} variant={complejidadVariant(resultado.complejidad)} />
+        <Button onClick={onNueva} variant="secondary">Nueva cotización</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h3 className="text-foreground font-semibold text-lg mb-6">Resumen de cotización</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <h4 className="text-muted text-sm font-medium mb-4">Proyecto</h4>
+          <dl className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-muted">Nombre</dt>
+              <dd className="text-foreground">{form.nombre_proyecto || 'Sin nombre'}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted">Tipo</dt>
+              <dd className="text-foreground">{tipoLabel}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted">Páginas</dt>
+              <dd className="text-foreground">{form.cantidad_paginas}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted">Diseño</dt>
+              <dd className="text-foreground capitalize">{form.nivel_disenio}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted">Tecnologías</dt>
+              <dd className="text-foreground text-right">{form.tecnologias.join(', ') || '—'}</dd>
+            </div>
+          </dl>
+        </Card>
+
+        <Card>
+          <h4 className="text-muted text-sm font-medium mb-4">Infraestructura</h4>
+          <dl className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-muted">Hosting</dt>
+              <dd className="text-foreground">{hostingLabel}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted">Entrega</dt>
+              <dd className="text-foreground">{tiempoLabel}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted">Desarrolladores</dt>
+              <dd className="text-foreground">{form.cantidad_desarrolladores}</dd>
+            </div>
+            {form.generado_por_ia && (
+              <div className="flex justify-between">
+                <dt className="text-muted">Generado por IA</dt>
+                <dd className="text-ia">✨ Sí</dd>
+              </div>
+            )}
+          </dl>
+        </Card>
+      </div>
+
+      {form.esMockup && form.rango_estimado && (
+        <div className="mt-6 text-center">
+          <p className="text-muted text-sm mb-2">Rango estimado (mockup)</p>
+          <p className="text-ia text-3xl font-bold">
+            {formatCurrency(form.rango_estimado.minimo_cop)} – {formatCurrency(form.rango_estimado.maximo_cop)}
+          </p>
+        </div>
+      )}
+
+      {error && <p className="text-danger text-sm mt-4 text-center">{error}</p>}
+
+      <div className="mt-8 flex justify-center">
+        <Button onClick={onConfirmar} loading={loading} className="px-8">
+          {loading ? <Spinner size="sm" /> : 'Generar cotización'}
+        </Button>
+      </div>
+    </div>
+  );
+}

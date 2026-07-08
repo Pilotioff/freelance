@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "12345"
+      POSTGRES_DB: freelance_estimator
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:7
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./freelance-estimator-backend
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://postgres:12345@postgres:5432/freelance_estimator
+      MONGODB_URI: mongodb://mongodb:27017/freelance_estimator
+      JWT_SECRET: cambia_esto_por_algo_seguro
+      JWT_EXPIRA: 7d
+      PORT: 3000
+      FRONTEND_URL: http://localhost:5173
+      OLLAMA_URL: http://host.docker.internal:11434
+      OLLAMA_MODEL: llama3.2
+      ADMIN_EMAIL_RESPALDO: admin@sistema.co
+      ADMIN_PASSWORD_RESPALDO: admin_respaldo_123
+      TARIFA_HORA_DEFAULT: 150000
+    depends_on:
+      - postgres
+      - mongodb
+
+  frontend:
+    build: ./freelance-estimator-frontend
+    ports:
+      - '5173:80'
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  mongo_data:

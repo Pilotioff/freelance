@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cotizacion {
+  id                       String                 @id @default(uuid())
+  usuario_id               String
+  nombre_proyecto          String
+  tipo_proyecto            String
+  cantidad_paginas         Int
+  nivel_disenio            String
+  hosting                  String
+  tiempo_entrega           String
+  cantidad_desarrolladores Int
+  horas_estimadas          Float
+  costo_infraestructura    Float
+  precio_final             Float
+  complejidad              String
+  generado_por_ia          Boolean                @default(false)
+  confianza_ia             Float?
+  creado_en                DateTime               @default(now())
+  tecnologias              CotizacionTecnologia[]
+}
+
+model CotizacionTecnologia {
+  id            String     @id @default(uuid())
+  cotizacion_id String
+  tecnologia    String
+  cotizacion    Cotizacion @relation(fields: [cotizacion_id], references: [id], onDelete: Cascade)
+}
+
+model PesoSistema {
+  id        String                 @id @default(uuid())
+  clave     String                 @unique
+  etiqueta  String
+  valor     Float
+  categoria String
+  historial HistorialCambiosPesos[]
+}
+
+model HistorialCambiosPesos {
+  id             String      @id @default(uuid())
+  peso_id        String
+  valor_anterior Float
+  valor_nuevo    Float
+  modificado_por String
+  modificado_en  DateTime    @default(now())
+  peso           PesoSistema @relation(fields: [peso_id], references: [id], onDelete: Cascade)
+}
+
+model TokenRefresco {
+  id         String   @id @default(uuid())
+  usuario_id String
+  token      String   @unique
+  expira_en  DateTime
+  creado_en  DateTime @default(now())
+}

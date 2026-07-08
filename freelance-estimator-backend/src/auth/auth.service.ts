@@ -26,20 +26,15 @@ export interface UsuarioResponse {
   telefono?: string;
   tarifa_hora_cop?: number;
   avatar_url?: string;
+  onboarding_completado: boolean;
+  tarifa_hora_sugerida?: number;
+  tarifa_preferida?: string;
 }
 
 export interface LoginExitoResponse {
   exito: true;
   mensaje: string;
-  usuario: {
-    id: string;
-    nombre: string;
-    apellido: string;
-    email: string;
-    rol: string;
-    activo: boolean;
-    tarifa_hora_cop?: number;
-  };
+  usuario: UsuarioResponse;
   modoRespaldo: false;
 }
 
@@ -96,15 +91,7 @@ export class AuthService {
     return {
       exito: true,
       mensaje: 'Sesión iniciada.',
-      usuario: {
-        id: usuario._id.toString(),
-        nombre: usuario.nombre,
-        apellido: usuario.apellido,
-        email: usuario.email,
-        rol: usuario.rol,
-        activo: usuario.activo ?? true,
-        tarifa_hora_cop: usuario.tarifa_hora_cop,
-      },
+      usuario: this.mapUsuario(usuario),
       modoRespaldo: false,
     };
   }
@@ -118,6 +105,7 @@ export class AuthService {
         email: this.configService.get<string>('adminEmailRespaldo') ?? '',
         rol: RolUsuario.ADMIN,
         tarifa_hora_cop: this.configService.get<number>('tarifaHoraDefault') ?? 150000,
+        onboarding_completado: true,
       };
     }
 
@@ -144,10 +132,14 @@ export class AuthService {
       apellido: usuario.apellido,
       email: usuario.email,
       rol: usuario.rol,
+      activo: usuario.activo ?? true,
       empresa: usuario.empresa,
       telefono: usuario.telefono,
       tarifa_hora_cop: usuario.tarifa_hora_cop,
       avatar_url: usuario.avatar_url,
+      onboarding_completado: usuario.onboarding_completado ?? false,
+      tarifa_hora_sugerida: usuario.tarifa_hora_sugerida,
+      tarifa_preferida: usuario.tarifa_preferida,
     };
   }
 }

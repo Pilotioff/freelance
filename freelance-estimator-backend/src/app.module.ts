@@ -10,6 +10,7 @@ import { IaModule } from './ia/ia.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { DivisasModule } from './divisas/divisas.module';
 import { AdminModule } from './admin/admin.module';
+import { FreelancerExperienceModule } from './freelancer-experience/freelancer-experience.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
@@ -27,6 +28,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
     DashboardModule,
     DivisasModule,
     AdminModule,
+    FreelancerExperienceModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

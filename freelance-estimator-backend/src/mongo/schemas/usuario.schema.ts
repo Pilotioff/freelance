@@ -8,6 +8,11 @@ export enum RolUsuario {
   ADMIN = 'ADMIN',
 }
 
+export enum TarifaPreferida {
+  MANUAL = 'manual',
+  SUGERIDA = 'sugerida',
+}
+
 @Schema({ collection: 'usuarios', timestamps: { createdAt: 'creado_en', updatedAt: 'actualizado_en' } })
 export class Usuario {
   @Prop({ required: true })
@@ -39,6 +44,15 @@ export class Usuario {
 
   @Prop()
   avatar_url?: string;
+
+  @Prop({ default: false })
+  onboarding_completado!: boolean;
+
+  @Prop()
+  tarifa_hora_sugerida?: number;
+
+  @Prop({ type: String, enum: TarifaPreferida, default: TarifaPreferida.MANUAL })
+  tarifa_preferida?: TarifaPreferida;
 }
 
 export const UsuarioSchema = SchemaFactory.createForClass(Usuario);

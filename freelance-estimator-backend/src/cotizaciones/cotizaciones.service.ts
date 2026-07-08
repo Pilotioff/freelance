@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CrearCotizacionDto } from './dto/crear-cotizacion.dto';
+import { EstimarCotizacionDto } from './dto/estimar-cotizacion.dto';
 import { Cotizacion, Prisma } from '@prisma/client';
 import { AuthService } from '../auth/auth.service';
 import { DivisasService, Moneda } from '../divisas/divisas.service';
@@ -16,6 +17,30 @@ export interface FiltrosCotizacion {
   hasta?: string;
 }
 
+export interface CalculoCotizacion {
+  horasEstimadas: number;
+  costoDesarrollo: number;
+  costoInfra: number;
+  precioSinMargen: number;
+  precioFinal: number;
+  margenPerfil: number;
+  complejidad: string;
+  costoDiseno: number;
+  costoFrontend: number;
+  costoBackend: number;
+  costoBd: number;
+}
+
+interface DatosParaCalculo {
+  tipo_proyecto: string;
+  nivel_disenio: string;
+  tiempo_entrega: string;
+  hosting: string;
+  perfil_cliente: string;
+  cantidad_desarrolladores: number;
+  tarifaHora: number;
+}
+
 @Injectable()
 export class CotizacionesService {
   constructor(
@@ -24,32 +49,68 @@ export class CotizacionesService {
     private readonly divisasService: DivisasService,
   ) {}
 
-  async crear(usuarioId: string, dto: CrearCotizacionDto): Promise<CotizacionConTecnologias> {
-    const usuario = await this.authService.obtenerPorId(usuarioId);
-    const tarifaHora = usuario?.tarifa_hora_cop ?? 150000;
+  async calcular(datos: DatosParaCalculo): Promise<CalculoCotizacion> {
+    const horasBase = await this.obtenerPeso(`${datos.tipo_proyecto}_base_hours`);
+    const multDiseno = await this.obtenerPeso(`design_${datos.nivel_disenio}`);
+    const multTiempo = await this.obtenerPeso(`delivery_${datos.tiempo_entrega}`);
+    const costoInfra = await this.obtenerPeso(`hosting_${datos.hosting}`);
+    const margenPerfil = await this.obtenerPeso(`margen_${datos.perfil_cliente}`);
 
-    const horasBase = await this.obtenerPeso(`${dto.tipo_proyecto}_base_hours`);
-    const multDiseno = await this.obtenerPeso(`design_${dto.nivel_disenio}`);
-    const multTiempo = await this.obtenerPeso(`delivery_${dto.tiempo_entrega}`);
-    const costoInfra = await this.obtenerPeso(`hosting_${dto.hosting}`);
-    const margenPerfil = await this.obtenerPeso(`margen_${dto.perfil_cliente}`);
-
-    const arquetipo = obtenerArquetipo(dto.tipo_proyecto);
+    const arquetipo = obtenerArquetipo(datos.tipo_proyecto);
     const pctDiseno = await this.obtenerPeso(`desglose_${arquetipo}_diseno`);
     const pctFrontend = await this.obtenerPeso(`desglose_${arquetipo}_frontend`);
     const pctBackend = await this.obtenerPeso(`desglose_${arquetipo}_backend`);
     const pctBd = await this.obtenerPeso(`desglose_${arquetipo}_bd`);
 
     const horasEstimadas = horasBase * multDiseno * multTiempo;
-    const costoDesarrollo = horasEstimadas * tarifaHora * dto.cantidad_desarrolladores;
+    const costoDesarrollo = horasEstimadas * datos.tarifaHora * datos.cantidad_desarrolladores;
     const precioSinMargen = costoDesarrollo + costoInfra;
     const precioFinal = precioSinMargen * margenPerfil;
     const complejidad = this.calcularComplejidad(horasEstimadas);
 
-    const costoDiseno = costoDesarrollo * pctDiseno;
-    const costoFrontend = costoDesarrollo * pctFrontend;
-    const costoBackend = costoDesarrollo * pctBackend;
-    const costoBd = costoDesarrollo * pctBd;
+    return {
+      horasEstimadas,
+      costoDesarrollo,
+      costoInfra,
+      precioSinMargen,
+      precioFinal,
+      margenPerfil,
+      complejidad,
+      costoDiseno: costoDesarrollo * pctDiseno,
+      costoFrontend: costoDesarrollo * pctFrontend,
+      costoBackend: costoDesarrollo * pctBackend,
+      costoBd: costoDesarrollo * pctBd,
+    };
+  }
+
+  async estimar(usuarioId: string, dto: EstimarCotizacionDto): Promise<CalculoCotizacion> {
+    const usuario = await this.authService.obtenerPorId(usuarioId);
+    const tarifaHora = usuario?.tarifa_hora_cop ?? 150000;
+
+    return this.calcular({
+      tipo_proyecto: dto.tipo_proyecto,
+      nivel_disenio: dto.nivel_disenio,
+      tiempo_entrega: dto.tiempo_entrega,
+      hosting: dto.hosting,
+      perfil_cliente: dto.perfil_cliente,
+      cantidad_desarrolladores: dto.cantidad_desarrolladores,
+      tarifaHora,
+    });
+  }
+
+  async crear(usuarioId: string, dto: CrearCotizacionDto): Promise<CotizacionConTecnologias> {
+    const usuario = await this.authService.obtenerPorId(usuarioId);
+    const tarifaHora = usuario?.tarifa_hora_cop ?? 150000;
+
+    const calculo = await this.calcular({
+      tipo_proyecto: dto.tipo_proyecto,
+      nivel_disenio: dto.nivel_disenio,
+      tiempo_entrega: dto.tiempo_entrega,
+      hosting: dto.hosting,
+      perfil_cliente: dto.perfil_cliente,
+      cantidad_desarrolladores: dto.cantidad_desarrolladores,
+      tarifaHora,
+    });
 
     const monedaSeleccionada = dto.moneda_seleccionada ?? 'COP';
     let precioConvertido: number | null = null;
@@ -57,7 +118,7 @@ export class CotizacionesService {
 
     if (monedaSeleccionada !== 'COP') {
       const conversion = this.divisasService.convertir({
-        valor: precioFinal,
+        valor: calculo.precioFinal,
         monedaOrigen: 'COP',
         monedaDestino: monedaSeleccionada as Moneda,
       });
@@ -75,21 +136,21 @@ export class CotizacionesService {
         hosting: dto.hosting,
         tiempo_entrega: dto.tiempo_entrega,
         cantidad_desarrolladores: dto.cantidad_desarrolladores,
-        horas_estimadas: horasEstimadas,
-        costo_infraestructura: costoInfra,
-        precio_final: precioFinal,
-        complejidad,
+        horas_estimadas: calculo.horasEstimadas,
+        costo_infraestructura: calculo.costoInfra,
+        precio_final: calculo.precioFinal,
+        complejidad: calculo.complejidad,
         generado_por_ia: dto.generado_por_ia ?? false,
         confianza_ia: dto.confianza_ia,
         moneda_seleccionada: monedaSeleccionada,
         precio_convertido: precioConvertido,
         tasa_cambio_usada: tasaCambioUsada,
         perfil_cliente: dto.perfil_cliente,
-        margen_aplicado: margenPerfil,
-        costo_diseno: costoDiseno,
-        costo_frontend: costoFrontend,
-        costo_backend: costoBackend,
-        costo_bd: costoBd,
+        margen_aplicado: calculo.margenPerfil,
+        costo_diseno: calculo.costoDiseno,
+        costo_frontend: calculo.costoFrontend,
+        costo_backend: calculo.costoBackend,
+        costo_bd: calculo.costoBd,
         tecnologias: {
           create: dto.tecnologias.map((t) => ({ tecnologia: t })),
         },

@@ -2,6 +2,7 @@ import { Controller, Post, Get, Body, Query, UseGuards, Req } from '@nestjs/comm
 import { ApiTags, ApiOperation, ApiResponse, ApiCookieAuth, ApiQuery } from '@nestjs/swagger';
 import { CotizacionesService } from './cotizaciones.service';
 import { CrearCotizacionDto } from './dto/crear-cotizacion.dto';
+import { EstimarCotizacionDto } from './dto/estimar-cotizacion.dto';
 import { JwtAuthGuard, AuthenticatedRequest } from '../common/guards/jwt-auth.guard';
 
 @ApiTags('Cotizaciones')
@@ -19,6 +20,16 @@ export class CotizacionesController {
     @Body() dto: CrearCotizacionDto,
   ): Promise<Awaited<ReturnType<CotizacionesService['crear']>>> {
     return this.cotizacionesService.crear(req.user.sub, dto);
+  }
+
+  @Post('estimar')
+  @ApiOperation({ summary: 'Calcular una estimación en vivo sin guardar la cotización' })
+  @ApiResponse({ status: 200, description: 'Cálculo estimado' })
+  async estimar(
+    @Req() req: AuthenticatedRequest,
+    @Body() dto: EstimarCotizacionDto,
+  ): Promise<Awaited<ReturnType<CotizacionesService['estimar']>>> {
+    return this.cotizacionesService.estimar(req.user.sub, dto);
   }
 
   @Get()

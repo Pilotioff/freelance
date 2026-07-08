@@ -5,6 +5,7 @@ import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../hooks/useAuth';
 import { isValidEmail, minLength } from '../utils/validators';
+import logo from '../assets/logo.jpg';
 
 interface RegisterForm {
   nombre: string;
@@ -38,10 +39,8 @@ export function Register() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card padding="lg" className="w-full max-w-[420px]">
         <div className="text-center mb-8">
-          <h1 className="text-primary font-bold text-2xl tracking-wide">
-            FREELANCE ESTIMATOR
-          </h1>
-          <p className="text-muted text-sm mt-2">Crea tu cuenta gratuita</p>
+          <img src={logo} alt="Freelance Estimator" className="w-full max-w-[280px] mx-auto rounded-lg" />
+          <p className="text-muted text-sm mt-4">Crea tu cuenta gratuita</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

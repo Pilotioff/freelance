@@ -4,14 +4,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0F172A',
-        card: '#1E293B',
-        primary: '#2563EB',
+        background: '#111827',
+        card: '#1F2937',
+        primary: '#F5B700',
         ia: '#10B981',
-        foreground: '#F8FAFC',
-        muted: '#94A3B8',
+        foreground: '#FFFFFF',
+        muted: '#9CA3AF',
         success: '#22C55E',
-        warning: '#F59E0B',
+        warning: '#FB923C',
         danger: '#EF4444',
       },
     },

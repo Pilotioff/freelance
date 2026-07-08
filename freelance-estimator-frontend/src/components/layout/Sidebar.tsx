@@ -7,6 +7,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import logo from '../../assets/logo.jpg';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -20,11 +21,9 @@ export function Sidebar() {
   return (
     <aside className="w-64 min-h-screen bg-card border-r border-slate-700/50 flex flex-col">
       <div className="p-6 border-b border-slate-700/50">
-        <h1 className="text-primary font-bold text-lg leading-tight">
-          FREELANCE<br />ESTIMATOR
-        </h1>
+        <img src={logo} alt="Freelance Estimator" className="w-full rounded-lg" />
         {usuario && (
-          <p className="text-muted text-xs mt-2 truncate">
+          <p className="text-muted text-xs mt-3 truncate">
             {usuario.nombre} {usuario.apellido}
           </p>
         )}

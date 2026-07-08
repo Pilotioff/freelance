@@ -5,9 +5,10 @@ interface Step1TipoProps {
   selected: TipoProyecto | '';
   onSelect: (tipo: TipoProyecto) => void;
   sugeridoPorIA?: boolean;
+  error?: string;
 }
 
-export function Step1Tipo({ selected, onSelect, sugeridoPorIA }: Step1TipoProps) {
+export function Step1Tipo({ selected, onSelect, sugeridoPorIA, error }: Step1TipoProps) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-6">
@@ -26,7 +27,9 @@ export function Step1Tipo({ selected, onSelect, sugeridoPorIA }: Step1TipoProps)
             className={`p-5 rounded-xl border-2 text-left transition ${
               selected === tipo.value
                 ? 'border-primary bg-primary/10'
-                : 'border-slate-600 hover:border-slate-500 bg-card'
+                : error
+                  ? 'border-danger/50 hover:border-danger bg-card'
+                  : 'border-slate-600 hover:border-slate-500 bg-card'
             }`}
           >
             <span className="text-2xl">{tipo.icon}</span>
@@ -34,6 +37,7 @@ export function Step1Tipo({ selected, onSelect, sugeridoPorIA }: Step1TipoProps)
           </button>
         ))}
       </div>
+      {error && <p className="text-xs text-danger mt-3">{error}</p>}
     </div>
   );
 }

@@ -10,6 +10,8 @@ import { Step3Infraestructura } from '../components/cotizador/Step3Infraestructu
 import { Step4Resumen } from '../components/cotizador/Step4Resumen';
 import { useCotizacion } from '../hooks/useCotizacion';
 import { useIA } from '../hooks/useIA';
+import { validarPaso } from '../utils/validarCotizador';
+
 type Modo = 'seleccion' | 'manual' | 'ia';
 type Paso = 0 | 1 | 2 | 3 | 4;
 
@@ -20,6 +22,9 @@ export function Cotizador() {
   const [paso, setPaso] = useState<Paso>(0);
   const { form, updateForm, resetForm, crearCotizacion, loading, error, resultado } = useCotizacion();
   const ia = useIA();
+
+  const errores = validarPaso(paso, form);
+  const pasoInvalido = Object.keys(errores).length > 0;
 
   const handleModeSelect = (mode: 'manual' | 'ia') => {
     setModo(mode);
@@ -95,6 +100,7 @@ export function Cotizador() {
             selected={form.tipo_proyecto}
             onSelect={(tipo) => updateForm({ tipo_proyecto: tipo })}
             sugeridoPorIA={form.generado_por_ia}
+            error={errores.tipo_proyecto}
           />
         )}
 
@@ -106,6 +112,7 @@ export function Cotizador() {
             tecnologias={form.tecnologias}
             onChange={(data) => updateForm(data)}
             sugeridoPorIA={form.generado_por_ia}
+            error={errores.nombre_proyecto}
           />
         )}
 
@@ -115,6 +122,7 @@ export function Cotizador() {
             tiempoEntrega={form.tiempo_entrega}
             cantidadDesarrolladores={form.cantidad_desarrolladores}
             onChange={(data) => updateForm(data)}
+            errores={{ hosting: errores.hosting, tiempo_entrega: errores.tiempo_entrega }}
           />
         )}
 
@@ -142,7 +150,7 @@ export function Cotizador() {
             </Button>
             <Button
               onClick={() => setPaso((p) => (p + 1) as Paso)}
-              disabled={paso === 1 && !form.tipo_proyecto}
+              disabled={pasoInvalido}
             >
               Siguiente
             </Button>

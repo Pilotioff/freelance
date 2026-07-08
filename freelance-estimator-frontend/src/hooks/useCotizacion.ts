@@ -17,8 +17,8 @@ const INITIAL_STATE: CotizacionFormState = {
   nivel_disenio: 'intermedio',
   tecnologias: [],
   cantidad_desarrolladores: 1,
-  tiempo_entrega: '1mes',
-  hosting: 'basico',
+  tiempo_entrega: '',
+  hosting: '',
   generado_por_ia: false,
   supuestos: [],
   esMockup: false,
@@ -45,12 +45,24 @@ export function useCotizacion() {
       setError('Selecciona un tipo de proyecto');
       return null;
     }
+    if (!form.nombre_proyecto.trim()) {
+      setError('El nombre del proyecto es obligatorio');
+      return null;
+    }
+    if (!form.hosting) {
+      setError('Selecciona una opción de hosting');
+      return null;
+    }
+    if (!form.tiempo_entrega) {
+      setError('Selecciona un tiempo de entrega');
+      return null;
+    }
 
     setLoading(true);
     setError(null);
 
     const payload: CrearCotizacionPayload = {
-      nombre_proyecto: form.nombre_proyecto || 'Proyecto sin nombre',
+      nombre_proyecto: form.nombre_proyecto.trim(),
       tipo_proyecto: form.tipo_proyecto as TipoProyecto,
       cantidad_paginas: form.cantidad_paginas,
       nivel_disenio: form.nivel_disenio as NivelDisenio,

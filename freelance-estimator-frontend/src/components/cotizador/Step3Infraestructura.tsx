@@ -1,14 +1,18 @@
 import { HOSTING_OPTIONS, TIEMPOS_ENTREGA, Hosting, TiempoEntrega } from '../../types';
 
 interface Step3InfraestructuraProps {
-  hosting: Hosting;
-  tiempoEntrega: TiempoEntrega;
+  hosting: Hosting | '';
+  tiempoEntrega: TiempoEntrega | '';
   cantidadDesarrolladores: number;
   onChange: (data: {
     hosting?: Hosting;
     tiempo_entrega?: TiempoEntrega;
     cantidad_desarrolladores?: number;
   }) => void;
+  errores?: {
+    hosting?: string;
+    tiempo_entrega?: string;
+  };
 }
 
 export function Step3Infraestructura({
@@ -16,6 +20,7 @@ export function Step3Infraestructura({
   tiempoEntrega,
   cantidadDesarrolladores,
   onChange,
+  errores,
 }: Step3InfraestructuraProps) {
   return (
     <div className="space-y-8">
@@ -29,7 +34,9 @@ export function Step3Infraestructura({
               className={`p-4 rounded-xl border-2 text-left transition ${
                 hosting === h.value
                   ? 'border-primary bg-primary/10'
-                  : 'border-slate-600 hover:border-slate-500'
+                  : errores?.hosting
+                    ? 'border-danger/50 hover:border-danger'
+                    : 'border-slate-600 hover:border-slate-500'
               }`}
             >
               <p className="text-foreground font-medium text-sm">{h.label}</p>
@@ -37,6 +44,7 @@ export function Step3Infraestructura({
             </button>
           ))}
         </div>
+        {errores?.hosting && <p className="text-xs text-danger mt-2">{errores.hosting}</p>}
       </div>
 
       <div>
@@ -49,13 +57,16 @@ export function Step3Infraestructura({
               className={`px-4 py-3 rounded-xl border-2 text-sm font-medium transition ${
                 tiempoEntrega === t.value
                   ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-slate-600 text-muted hover:text-foreground'
+                  : errores?.tiempo_entrega
+                    ? 'border-danger/50 text-muted hover:text-foreground'
+                    : 'border-slate-600 text-muted hover:text-foreground'
               }`}
             >
               {t.label}
             </button>
           ))}
         </div>
+        {errores?.tiempo_entrega && <p className="text-xs text-danger mt-2">{errores.tiempo_entrega}</p>}
       </div>
 
       <div>

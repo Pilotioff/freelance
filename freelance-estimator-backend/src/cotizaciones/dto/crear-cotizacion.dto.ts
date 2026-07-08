@@ -21,11 +21,11 @@ const HOSTING_OPTIONS = ['ninguno', 'basico', 'vps', 'cloud'] as const;
 export class CrearCotizacionDto {
   @ApiProperty({ example: 'Mi Proyecto Web' })
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'El nombre del proyecto es obligatorio' })
   nombre_proyecto!: string;
 
   @ApiProperty({ example: 'webapp', enum: TIPOS_PROYECTO })
-  @IsIn([...TIPOS_PROYECTO])
+  @IsIn([...TIPOS_PROYECTO], { message: 'Selecciona un tipo de proyecto válido' })
   tipo_proyecto!: string;
 
   @ApiProperty({ example: 10 })
@@ -52,11 +52,11 @@ export class CrearCotizacionDto {
   cantidad_desarrolladores!: number;
 
   @ApiProperty({ example: '1mes', enum: TIEMPOS_ENTREGA })
-  @IsIn([...TIEMPOS_ENTREGA])
+  @IsIn([...TIEMPOS_ENTREGA], { message: 'Selecciona un tiempo de entrega válido' })
   tiempo_entrega!: string;
 
   @ApiProperty({ example: 'vps', enum: HOSTING_OPTIONS })
-  @IsIn([...HOSTING_OPTIONS])
+  @IsIn([...HOSTING_OPTIONS], { message: 'Selecciona una opción de hosting válida' })
   hosting!: string;
 
   @ApiPropertyOptional({ example: false })

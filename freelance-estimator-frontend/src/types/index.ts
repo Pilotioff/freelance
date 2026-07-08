@@ -120,8 +120,8 @@ export interface CotizacionFormState {
   nivel_disenio: NivelDisenio;
   tecnologias: string[];
   cantidad_desarrolladores: number;
-  tiempo_entrega: TiempoEntrega;
-  hosting: Hosting;
+  tiempo_entrega: TiempoEntrega | '';
+  hosting: Hosting | '';
   generado_por_ia: boolean;
   confianza_ia?: number;
   rango_estimado?: RangoEstimado;

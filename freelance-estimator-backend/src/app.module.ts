@@ -11,6 +11,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { DivisasModule } from './divisas/divisas.module';
 import { AdminModule } from './admin/admin.module';
 import { FreelancerExperienceModule } from './freelancer-experience/freelancer-experience.module';
+import { MarketComparisonModule } from './market-comparison/market-comparison.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
@@ -29,6 +30,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
     DivisasModule,
     AdminModule,
     FreelancerExperienceModule,
+    MarketComparisonModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

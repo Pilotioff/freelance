@@ -6,6 +6,7 @@ import { Cotizacion, CotizacionFormState, Moneda } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { TIPOS_PROYECTO, HOSTING_OPTIONS, TIEMPOS_ENTREGA, MONEDAS_DISPONIBLES } from '../../types';
 import { EstimacionCalculada } from '../../api/cotizaciones.api';
+import { ComparacionMercado } from './ComparacionMercado';
 
 interface Step4ResumenProps {
   form: CotizacionFormState;
@@ -84,6 +85,10 @@ export function Step4Resumen({
             <DesgloseTabla desglose={desglose} />
           </div>
         )}
+
+        <div className="text-left">
+          <ComparacionMercado resultado={resultado} cantidadDesarrolladores={form.cantidad_desarrolladores} />
+        </div>
 
         <Button onClick={onNueva} variant="secondary">Nueva cotización</Button>
       </div>

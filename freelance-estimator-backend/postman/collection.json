@@ -1,0 +1,170 @@
+{
+  "info": {
+    "name": "FreelanceEstimator API - Pruebas de Contrato",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" }
+  ],
+  "item": [
+    {
+      "name": "1. Consultar sesion sin autenticar (debe rechazar)",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 401 sin cookie de sesion', function () { pm.response.to.have.status(401); });"
+          ]
+        }
+      }],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/auth/me"
+      }
+    },
+    {
+      "name": "2. Crear cliente sin autenticar (debe rechazar)",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 401 sin autenticacion', function () { pm.response.to.have.status(401); });"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cliente\",\n  \"apellido\": \"Prueba\",\n  \"tipo_cliente\": \"startup\"\n}"
+        },
+        "url": "{{baseUrl}}/clientes"
+      }
+    },
+    {
+      "name": "3. Listar clientes sin autenticar (debe rechazar)",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 401 sin autenticacion', function () { pm.response.to.have.status(401); });"
+          ]
+        }
+      }],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/clientes"
+      }
+    },
+    {
+      "name": "4. Estimar cotizacion sin autenticar (debe rechazar)",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 401 sin autenticacion', function () { pm.response.to.have.status(401); });"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo_proyecto\": \"webapp\",\n  \"cantidad_paginas\": 10,\n  \"nivel_disenio\": \"intermedio\",\n  \"cantidad_desarrolladores\": 1,\n  \"tiempo_entrega\": \"1mes\",\n  \"hosting\": \"vps\",\n  \"perfil_cliente\": \"startup\"\n}"
+        },
+        "url": "{{baseUrl}}/cotizaciones/estimar"
+      }
+    },
+    {
+      "name": "5. Login con credenciales invalidas",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 401 para credenciales invalidas', function () { pm.response.to.have.status(401); });"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"no-existe@test.com\",\n  \"password\": \"claveIncorrecta\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "6. Registro de usuario",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+            "pm.test('Respuesta tiene usuario con id', function () {",
+            "  const body = pm.response.json();",
+            "  pm.expect(body.data.usuario).to.have.property('id');",
+            "  pm.expect(body.data.usuario).to.have.property('email');",
+            "});"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Test\",\n  \"apellido\": \"Newman\",\n  \"email\": \"newman-{{$timestamp}}@test.com\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/registro"
+      }
+    },
+    {
+      "name": "7. Obtener tasas de cambio",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+            "pm.test('Incluye las 4 monedas esperadas', function () {",
+            "  const data = pm.response.json().data;",
+            "  pm.expect(data).to.have.all.keys('USD','EUR','GBP','JPY');",
+            "});"
+          ]
+        }
+      }],
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/divisas/tasas"
+      }
+    },
+    {
+      "name": "8. Convertir divisas",
+      "event": [{
+        "listen": "test",
+        "script": {
+          "exec": [
+            "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+            "pm.test('Respuesta tiene resultado y tasa', function () {",
+            "  const data = pm.response.json().data;",
+            "  pm.expect(data).to.have.property('resultado');",
+            "  pm.expect(data).to.have.property('tasa');",
+            "});"
+          ]
+        }
+      }],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"valor\": 1000000,\n  \"monedaOrigen\": \"COP\",\n  \"monedaDestino\": \"USD\"\n}"
+        },
+        "url": "{{baseUrl}}/divisas/convertir"
+      }
+    }
+  ]
+}

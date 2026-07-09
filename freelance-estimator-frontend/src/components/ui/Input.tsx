@@ -3,14 +3,15 @@ import { InputHTMLAttributes, forwardRef } from 'react';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  labelClassName?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className = '', ...props }, ref) => {
+  ({ label, error, labelClassName = 'text-muted', className = '', ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label className="text-sm font-medium text-muted">{label}</label>
+          <label className={`text-sm font-medium ${labelClassName}`}>{label}</label>
         )}
         <input
           ref={ref}

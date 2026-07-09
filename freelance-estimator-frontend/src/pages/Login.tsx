@@ -36,7 +36,7 @@ export function Login() {
       <Card padding="lg" className="w-full max-w-[420px]">
         <div className="text-center mb-8">
           <img src={logo} alt="Freelance Estimator" className="w-full max-w-[280px] mx-auto rounded-lg" />
-          <p className="text-muted text-sm mt-4">Inicia sesión en tu cuenta</p>
+          <p className="text-primary text-sm mt-4 font-medium">Inicia sesión en tu cuenta</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -45,6 +45,7 @@ export function Login() {
             type="email"
             placeholder="tu@email.com"
             error={errors.email?.message}
+            labelClassName="text-primary"
             {...register('email', {
               required: 'Email requerido',
               validate: (v) => isValidEmail(v) || 'Email inválido',
@@ -55,6 +56,7 @@ export function Login() {
             type="password"
             placeholder="••••••••"
             error={errors.password?.message}
+            labelClassName="text-primary"
             {...register('password', { required: 'Contraseña requerida' })}
           />
 

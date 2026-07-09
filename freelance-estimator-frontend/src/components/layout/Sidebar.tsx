@@ -20,10 +20,10 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 min-h-screen bg-card border-r border-slate-700/50 flex flex-col">
-      <div className="p-6 border-b border-slate-700/50">
-        <img src={logo} alt="Freelance Estimator" className="w-full rounded-lg" />
+      <div className="bg-background p-6 border-b border-slate-700/50">
+        <img src={logo} alt="Freelance Estimator" className="w-full" />
         {usuario && (
-          <p className="text-muted text-xs mt-3 truncate">
+          <p className="text-primary text-base font-semibold mt-3 truncate">
             {usuario.nombre} {usuario.apellido}
           </p>
         )}

@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0A0A0A',
-        card: '#18181B',
+        background: '#02020E',
+        card: '#02020E',
         primary: '#F5B700',
         ia: '#10B981',
         foreground: '#FFFFFF',

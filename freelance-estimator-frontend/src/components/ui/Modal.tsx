@@ -6,9 +6,15 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  size?: 'md' | 'lg';
 }
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+const sizes = {
+  md: 'max-w-md',
+  lg: 'max-w-2xl',
+};
+
+export function Modal({ open, onClose, title, children, size = 'md' }: ModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -22,7 +28,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative bg-card rounded-2xl border border-slate-700 w-full max-w-md p-6 shadow-xl">
+      <div className={`relative bg-card rounded-2xl border border-slate-700 w-full ${sizes[size]} p-6 shadow-xl`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-foreground">{title}</h2>
           <button onClick={onClose} className="text-muted hover:text-foreground transition">

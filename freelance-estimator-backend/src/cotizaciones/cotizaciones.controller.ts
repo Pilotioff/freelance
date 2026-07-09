@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiCookieAuth, ApiQuery } from '@nestjs/swagger';
 import { CotizacionesService } from './cotizaciones.service';
 import { CrearCotizacionDto } from './dto/crear-cotizacion.dto';
@@ -45,5 +45,16 @@ export class CotizacionesController {
     @Query('hasta') hasta?: string,
   ): Promise<Awaited<ReturnType<CotizacionesService['listar']>>> {
     return this.cotizacionesService.listar(req.user.sub, { complejidad, desde, hasta });
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar una cotización' })
+  @ApiResponse({ status: 200, description: 'Cotización eliminada' })
+  @ApiResponse({ status: 404, description: 'Cotización no encontrada' })
+  async eliminar(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ): Promise<Awaited<ReturnType<CotizacionesService['eliminar']>>> {
+    return this.cotizacionesService.eliminar(req.user.sub, id);
   }
 }

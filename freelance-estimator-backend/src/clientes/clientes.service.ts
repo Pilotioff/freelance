@@ -158,6 +158,16 @@ export class ClientesService {
     });
   }
 
+  async eliminar(usuarioId: string, clienteId: string): Promise<{ eliminado: boolean }> {
+    const cliente = await this.prisma.cliente.findUnique({ where: { id: clienteId } });
+    if (!cliente || cliente.usuario_id !== usuarioId) {
+      throw new NotFoundException('Cliente no encontrado');
+    }
+
+    await this.prisma.cliente.delete({ where: { id: clienteId } });
+    return { eliminado: true };
+  }
+
   async obtenerTipoCliente(usuarioId: string, clienteId: string): Promise<string | null> {
     const cliente = await this.prisma.cliente.findUnique({ where: { id: clienteId } });
     if (!cliente || cliente.usuario_id !== usuarioId) {

@@ -9,7 +9,7 @@ import { Cotizacion, Complejidad } from '../types';
 import { formatCurrency } from '../utils/formatCurrency';
 import { DetalleCotizacionModal } from '../components/cotizador/DetalleCotizacionModal';
 
-export function Historial() {
+export function Cotizaciones() {
   const [cotizaciones, setCotizaciones] = useState<Cotizacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,12 +17,18 @@ export function Historial() {
   const [filtroComplejidad, setFiltroComplejidad] = useState<Complejidad | ''>('');
   const [seleccionada, setSeleccionada] = useState<Cotizacion | null>(null);
 
-  useEffect(() => {
+  const cargar = () => {
+    setLoading(true);
     cotizacionesApi
       .listar(filtroComplejidad ? { complejidad: filtroComplejidad } : undefined)
       .then(setCotizaciones)
-      .catch(() => setError('Error al cargar historial'))
+      .catch(() => setError('Error al cargar cotizaciones'))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    cargar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtroComplejidad]);
 
   const filtradas = cotizaciones.filter((c) =>
@@ -31,7 +37,7 @@ export function Historial() {
   );
 
   return (
-    <AppLayout title="Historial">
+    <AppLayout title="Cotizaciones">
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
@@ -97,7 +103,11 @@ export function Historial() {
         </div>
       )}
 
-      <DetalleCotizacionModal cotizacion={seleccionada} onClose={() => setSeleccionada(null)} />
+      <DetalleCotizacionModal
+        cotizacion={seleccionada}
+        onClose={() => setSeleccionada(null)}
+        onEliminada={cargar}
+      />
     </AppLayout>
   );
 }

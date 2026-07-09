@@ -47,4 +47,9 @@ export const cotizacionesApi = {
     const res = await api.get<{ data: Cotizacion[] }>('/cotizaciones', { params: filtros });
     return unwrapData(res);
   },
+
+  eliminar: async (id: string): Promise<{ eliminado: boolean }> => {
+    const res = await api.delete<{ data: { eliminado: boolean } }>(`/cotizaciones/${id}`);
+    return unwrapData(res);
+  },
 };

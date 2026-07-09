@@ -1,17 +1,25 @@
+import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Badge, complejidadVariant } from '../ui/Badge';
+import { Button } from '../ui/Button';
 import { Cotizacion, TIPOS_PROYECTO, HOSTING_OPTIONS, TIEMPOS_ENTREGA } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { DesgloseTabla } from './DesgloseTabla';
 import { ComparacionMercado } from './ComparacionMercado';
 import { BotonExportar } from './BotonExportar';
+import { cotizacionesApi } from '../../api/cotizaciones.api';
 
 interface DetalleCotizacionModalProps {
   cotizacion: Cotizacion | null;
   onClose: () => void;
+  onEliminada: () => void;
 }
 
-export function DetalleCotizacionModal({ cotizacion, onClose }: DetalleCotizacionModalProps) {
+export function DetalleCotizacionModal({ cotizacion, onClose, onEliminada }: DetalleCotizacionModalProps) {
+  const [confirmandoEliminar, setConfirmandoEliminar] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
+
   if (!cotizacion) return null;
 
   const tipoLabel = TIPOS_PROYECTO.find((t) => t.value === cotizacion.tipo_proyecto)?.label ?? cotizacion.tipo_proyecto;
@@ -29,9 +37,42 @@ export function DetalleCotizacionModal({ cotizacion, onClose }: DetalleCotizacio
     total: cotizacion.precio_final,
   };
 
+  const handleEliminar = async () => {
+    setEliminando(true);
+    try {
+      await cotizacionesApi.eliminar(cotizacion.id);
+      onEliminada();
+      onClose();
+    } finally {
+      setEliminando(false);
+    }
+  };
+
   return (
     <Modal open={!!cotizacion} onClose={onClose} title={cotizacion.nombre_proyecto}>
       <div className="max-h-[70vh] overflow-y-auto space-y-6 pr-1">
+        <div className="flex justify-end">
+          <Button variant="danger" onClick={() => setConfirmandoEliminar(true)}>
+            <Trash2 size={14} /> Eliminar cotización
+          </Button>
+        </div>
+
+        {confirmandoEliminar && (
+          <div className="bg-danger/10 border border-danger/30 rounded-lg p-4">
+            <p className="text-foreground text-sm mb-3">
+              ¿Eliminar la cotización <strong>{cotizacion.nombre_proyecto}</strong>? Esta acción no se puede deshacer.
+            </p>
+            <div className="flex gap-3">
+              <Button variant="danger" onClick={handleEliminar} loading={eliminando}>
+                Sí, eliminar
+              </Button>
+              <Button variant="ghost" onClick={() => setConfirmandoEliminar(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        )}
+
         <div className="text-center">
           <p className="text-ia text-3xl font-bold">
             {hayConversion

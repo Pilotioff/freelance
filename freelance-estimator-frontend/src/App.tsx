@@ -5,7 +5,7 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { Cotizador } from './pages/Cotizador';
-import { Historial } from './pages/Historial';
+import { Cotizaciones } from './pages/Cotizaciones';
 import { Clientes } from './pages/Clientes';
 import { Admin } from './pages/Admin';
 
@@ -18,7 +18,7 @@ export function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/cotizador" element={<ProtectedRoute><Cotizador /></ProtectedRoute>} />
-          <Route path="/historial" element={<ProtectedRoute><Historial /></ProtectedRoute>} />
+          <Route path="/cotizaciones" element={<ProtectedRoute><Cotizaciones /></ProtectedRoute>} />
           <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

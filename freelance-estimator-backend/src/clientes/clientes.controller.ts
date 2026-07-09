@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ClientesService } from './clientes.service';
 import { CrearClienteDto } from './dto/crear-cliente.dto';
@@ -53,5 +53,16 @@ export class ClientesController {
     @Body() dto: ActualizarClienteDto,
   ): Promise<Awaited<ReturnType<ClientesService['actualizar']>>> {
     return this.clientesService.actualizar(req.user.sub, id, dto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar cliente (las cotizaciones asociadas quedan sin cliente, no se borran)' })
+  @ApiResponse({ status: 200, description: 'Cliente eliminado' })
+  @ApiResponse({ status: 404, description: 'Cliente no encontrado' })
+  async eliminar(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ): Promise<Awaited<ReturnType<ClientesService['eliminar']>>> {
+    return this.clientesService.eliminar(req.user.sub, id);
   }
 }

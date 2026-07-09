@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Calculator,
-  History,
+  FileText,
   Users,
   Settings,
   LogOut,
@@ -14,7 +14,7 @@ const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/cotizador', label: 'Cotizador', icon: Calculator },
   { to: '/clientes', label: 'Clientes', icon: Users },
-  { to: '/historial', label: 'Historial', icon: History },
+  { to: '/cotizaciones', label: 'Cotizaciones', icon: FileText },
 ];
 
 export function Sidebar() {

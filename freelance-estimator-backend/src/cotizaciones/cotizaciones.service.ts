@@ -218,6 +218,16 @@ export class CotizacionesService {
     return cotizacion;
   }
 
+  async eliminar(usuarioId: string, cotizacionId: string): Promise<{ eliminado: boolean }> {
+    const cotizacion = await this.prisma.cotizacion.findUnique({ where: { id: cotizacionId } });
+    if (!cotizacion || cotizacion.usuario_id !== usuarioId) {
+      throw new NotFoundException('Cotización no encontrada');
+    }
+
+    await this.prisma.cotizacion.delete({ where: { id: cotizacionId } });
+    return { eliminado: true };
+  }
+
   private async obtenerPeso(clave: string): Promise<number> {
     const peso = await this.prisma.pesoSistema.findUnique({ where: { clave } });
     if (!peso) {

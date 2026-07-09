@@ -28,4 +28,9 @@ export const clientesApi = {
     const res = await api.patch<{ data: ClienteConMetricas }>(`/clientes/${id}`, payload);
     return unwrapData(res);
   },
+
+  eliminar: async (id: string): Promise<{ eliminado: boolean }> => {
+    const res = await api.delete<{ data: { eliminado: boolean } }>(`/clientes/${id}`);
+    return unwrapData(res);
+  },
 };

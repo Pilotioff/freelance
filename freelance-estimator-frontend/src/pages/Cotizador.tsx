@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Layers, FileText, Server, CheckCircle2 } from 'lucide-react';
+import { Users, Layers, FileText, Server, CheckCircle2 } from 'lucide-react';
 import { AppLayout } from '../components/layout/AppLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ModeSelector } from '../components/cotizador/ModeSelector';
 import { IAUploader } from '../components/cotizador/IAUploader';
+import { Step0Cliente } from '../components/cotizador/Step0Cliente';
 import { Step1Tipo } from '../components/cotizador/Step1Tipo';
 import { Step2Detalles } from '../components/cotizador/Step2Detalles';
 import { Step3Infraestructura } from '../components/cotizador/Step3Infraestructura';
@@ -15,11 +16,13 @@ import { useCotizacion } from '../hooks/useCotizacion';
 import { useIA } from '../hooks/useIA';
 import { useEstimacionViva } from '../hooks/useEstimacionViva';
 import { validarPaso } from '../utils/validarCotizador';
+import { Cliente, PerfilCliente } from '../types';
 
 type Modo = 'seleccion' | 'manual' | 'ia';
-type Paso = 0 | 1 | 2 | 3 | 4;
+type Paso = 0 | 1 | 2 | 3 | 4 | 5;
 
 const STEPPER_ITEMS = [
+  { label: 'Cliente', icon: <Users size={16} /> },
   { label: 'Tipo', icon: <Layers size={16} /> },
   { label: 'Detalles', icon: <FileText size={16} /> },
   { label: 'Infra', icon: <Server size={16} /> },
@@ -69,6 +72,22 @@ export function Cotizador() {
     }
   };
 
+  const handleSeleccionarCliente = (cliente: Cliente | null) => {
+    if (cliente) {
+      updateForm({
+        cliente_id: cliente.id,
+        cliente_nombre: `${cliente.nombre} ${cliente.apellido}`,
+        perfil_cliente: cliente.tipo_cliente as PerfilCliente,
+      });
+    } else {
+      updateForm({
+        cliente_id: undefined,
+        cliente_nombre: undefined,
+        perfil_cliente: 'emprendedor',
+      });
+    }
+  };
+
   const mostrarPanel = modo !== 'seleccion' && !(modo === 'ia' && paso === 0);
 
   return (
@@ -94,6 +113,14 @@ export function Cotizador() {
             )}
 
             {paso === 1 && (
+              <Step0Cliente
+                clienteId={form.cliente_id}
+                clienteNombre={form.cliente_nombre}
+                onSeleccionar={handleSeleccionarCliente}
+              />
+            )}
+
+            {paso === 2 && (
               <Step1Tipo
                 selected={form.tipo_proyecto}
                 onSelect={(tipo) => updateForm({ tipo_proyecto: tipo })}
@@ -102,7 +129,7 @@ export function Cotizador() {
               />
             )}
 
-            {paso === 2 && (
+            {paso === 3 && (
               <Step2Detalles
                 nombreProyecto={form.nombre_proyecto}
                 cantidadPaginas={form.cantidad_paginas}
@@ -114,7 +141,7 @@ export function Cotizador() {
               />
             )}
 
-            {paso === 3 && (
+            {paso === 4 && (
               <Step3Infraestructura
                 hosting={form.hosting}
                 tiempoEntrega={form.tiempo_entrega}
@@ -124,7 +151,7 @@ export function Cotizador() {
               />
             )}
 
-            {paso === 4 && (
+            {paso === 5 && (
               <Step4Resumen
                 form={form}
                 resultado={resultado}
@@ -137,7 +164,7 @@ export function Cotizador() {
               />
             )}
 
-            {modo !== 'seleccion' && paso < 4 && !(modo === 'ia' && paso === 0) && (
+            {modo !== 'seleccion' && paso < 5 && !(modo === 'ia' && paso === 0) && (
               <div className="flex justify-between mt-8 pt-6 border-t border-slate-700">
                 <Button
                   variant="ghost"

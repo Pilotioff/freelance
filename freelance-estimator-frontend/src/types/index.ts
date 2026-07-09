@@ -97,6 +97,7 @@ export interface CrearCotizacionPayload {
   confianza_ia?: number;
   moneda_seleccionada?: Moneda;
   perfil_cliente: PerfilCliente;
+  cliente_id?: string;
 }
 
 export interface DashboardResumen {
@@ -152,6 +153,8 @@ export interface CotizacionFormState {
   esMockup: boolean;
   moneda_seleccionada: Moneda;
   perfil_cliente: PerfilCliente | '';
+  cliente_id?: string;
+  cliente_nombre?: string;
 }
 
 export const TIPOS_PROYECTO: { value: TipoProyecto; label: string; icon: string }[] = [

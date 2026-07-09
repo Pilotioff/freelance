@@ -25,6 +25,8 @@ const INITIAL_STATE: CotizacionFormState = {
   esMockup: false,
   moneda_seleccionada: 'COP',
   perfil_cliente: 'emprendedor',
+  cliente_id: undefined,
+  cliente_nombre: undefined,
 };
 
 export function useCotizacion() {
@@ -81,6 +83,7 @@ export function useCotizacion() {
       confianza_ia: form.confianza_ia,
       moneda_seleccionada: form.moneda_seleccionada,
       perfil_cliente: form.perfil_cliente as PerfilCliente,
+      cliente_id: form.cliente_id,
     };
 
     try {

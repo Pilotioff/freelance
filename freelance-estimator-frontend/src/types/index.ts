@@ -232,3 +232,66 @@ export interface ResultadoEvaluacion {
   areas_mejora: string[];
   confianza: number;
 }
+
+export interface Cliente {
+  id: string;
+  usuario_id: string;
+  nombre: string;
+  apellido: string;
+  empresa?: string;
+  correo?: string;
+  telefono?: string;
+  ciudad?: string;
+  pais?: string;
+  sitio_web?: string;
+  linkedin?: string;
+  tipo_cliente: string;
+  observaciones?: string;
+  activo: boolean;
+  creado_en: string;
+  actualizado_en: string;
+}
+
+export interface ClienteConMetricas extends Cliente {
+  cantidad_cotizaciones: number;
+  valor_total_cotizado: number;
+  ultima_cotizacion: string | null;
+}
+
+export interface DetalleCliente extends ClienteConMetricas {
+  promedio_por_proyecto: number;
+  tecnologias_mas_usadas: { tecnologia: string; cantidad: number }[];
+  cotizaciones: Cotizacion[];
+}
+
+export interface ListadoClientes {
+  clientes: ClienteConMetricas[];
+  total: number;
+  pagina: number;
+  porPagina: number;
+}
+
+export interface CrearClientePayload {
+  nombre: string;
+  apellido: string;
+  empresa?: string;
+  correo?: string;
+  telefono?: string;
+  ciudad?: string;
+  pais?: string;
+  sitio_web?: string;
+  linkedin?: string;
+  tipo_cliente: PerfilCliente;
+  observaciones?: string;
+  activo?: boolean;
+}
+
+export interface FiltrosClientes {
+  busqueda?: string;
+  tipo_cliente?: string;
+  activo?: string;
+  ordenarPor?: 'nombre' | 'creado_en' | 'ultima_cotizacion' | 'valor_total_cotizado';
+  orden?: 'asc' | 'desc';
+  pagina?: number;
+  porPagina?: number;
+}

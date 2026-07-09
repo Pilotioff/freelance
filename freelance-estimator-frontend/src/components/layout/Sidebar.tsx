@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Calculator,
   History,
+  Users,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -12,6 +13,7 @@ import logo from '../../assets/logo.jpg';
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/cotizador', label: 'Cotizador', icon: Calculator },
+  { to: '/clientes', label: 'Clientes', icon: Users },
   { to: '/historial', label: 'Historial', icon: History },
 ];
 

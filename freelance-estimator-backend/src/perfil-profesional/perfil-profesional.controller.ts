@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PerfilProfesionalService } from './perfil-profesional.service';
 import { ActualizarTarifaDto } from './dto/actualizar-tarifa.dto';
@@ -28,5 +29,17 @@ export class PerfilProfesionalController {
     @Body() dto: ActualizarTarifaDto,
   ): Promise<Awaited<ReturnType<PerfilProfesionalService['actualizarTarifa']>>> {
     return this.service.actualizarTarifa(req.user.sub, dto);
+  }
+
+  @Get('exportar')
+  @ApiOperation({ summary: 'Exportar el perfil profesional a PDF' })
+  async exportar(@Req() req: AuthenticatedRequest, @Res() res: Response): Promise<void> {
+    const buffer = await this.service.exportarPdf(req.user.sub);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="perfil-profesional.pdf"',
+      'Content-Length': buffer.length,
+    });
+    res.send(buffer);
   }
 }

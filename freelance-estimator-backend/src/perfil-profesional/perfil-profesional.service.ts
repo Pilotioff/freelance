@@ -8,6 +8,7 @@ import { Usuario, UsuarioDocument } from '../mongo/schemas/usuario.schema';
 import { EvaluacionExperiencia, EvaluacionExperienciaDocument } from '../mongo/schemas/evaluacion-experiencia.schema';
 import { ActualizarTarifaDto } from './dto/actualizar-tarifa.dto';
 import { LABELS_TECNOLOGIA } from '../freelancer-experience/tecnologias';
+import { PdfPerfilGenerator } from './pdf-perfil.generator';
 
 const CATEGORIA_LABEL: Record<string, string> = {
   frontend: 'Frontend',
@@ -48,6 +49,7 @@ export class PerfilProfesionalService {
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly freelancerExperienceService: FreelancerExperienceService,
+    private readonly pdfPerfilGenerator: PdfPerfilGenerator,
     @InjectModel(Usuario.name) private readonly usuarioModel: Model<UsuarioDocument>,
     @InjectModel(EvaluacionExperiencia.name)
     private readonly evaluacionModel: Model<EvaluacionExperienciaDocument>,
@@ -117,6 +119,11 @@ export class PerfilProfesionalService {
 
     await this.usuarioModel.findByIdAndUpdate(usuarioId, cambios);
     return { actualizado: true };
+  }
+
+  async exportarPdf(usuarioId: string): Promise<Buffer> {
+    const perfil = await this.obtenerPerfil(usuarioId);
+    return this.pdfPerfilGenerator.generar(perfil);
   }
 
   private async calcularEstadisticas(usuarioId: string): Promise<EstadisticasPerfil> {

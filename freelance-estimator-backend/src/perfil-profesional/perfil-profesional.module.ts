@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PerfilProfesionalController } from './perfil-profesional.controller';
 import { PerfilProfesionalService } from './perfil-profesional.service';
+import { PdfPerfilGenerator } from './pdf-perfil.generator';
 import { AuthModule } from '../auth/auth.module';
 import { FreelancerExperienceModule } from '../freelancer-experience/freelancer-experience.module';
 import { MongoModule } from '../mongo/mongo.module';
@@ -17,6 +18,6 @@ import { EvaluacionExperiencia, EvaluacionExperienciaSchema } from '../mongo/sch
     ]),
   ],
   controllers: [PerfilProfesionalController],
-  providers: [PerfilProfesionalService],
+  providers: [PerfilProfesionalService, PdfPerfilGenerator],
 })
 export class PerfilProfesionalModule {}

@@ -19,6 +19,7 @@ export function PerfilProfesional() {
   const [error, setError] = useState<string | null>(null);
   const [editarTarifaAbierto, setEditarTarifaAbierto] = useState(false);
   const [actualizarEvaluacionAbierto, setActualizarEvaluacionAbierto] = useState(false);
+  const [exportando, setExportando] = useState(false);
 
   const cargar = useCallback(() => {
     setLoading(true);
@@ -33,6 +34,15 @@ export function PerfilProfesional() {
     cargar();
   }, [cargar]);
 
+  const handleExportar = async () => {
+    setExportando(true);
+    try {
+      await perfilProfesionalApi.exportarPdf();
+    } finally {
+      setExportando(false);
+    }
+  };
+
   return (
     <AppLayout
       title="Perfil Profesional"
@@ -44,7 +54,7 @@ export function PerfilProfesional() {
           <Button variant="secondary" onClick={() => setEditarTarifaAbierto(true)}>
             <Pencil size={14} /> Editar valor por hora
           </Button>
-          <Button variant="secondary" disabled title="Próximamente">
+          <Button variant="secondary" onClick={handleExportar} loading={exportando}>
             <Download size={14} /> Exportar perfil
           </Button>
         </div>

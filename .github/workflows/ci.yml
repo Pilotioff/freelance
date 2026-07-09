@@ -101,7 +101,7 @@ jobs:
           npx prisma generate
           npx prisma migrate deploy
           npm run build
-          pm2 restart freelance-backend --update-env || pm2 start dist/main.js --name freelance-backend --update-env
+          pm2 restart freelance-backend --update-env || pm2 start dist/src/main.js --name freelance-backend --update-env
       - name: Construir y desplegar frontend (pm2, puerto 4173)
         working-directory: freelance-estimator-frontend
         env:

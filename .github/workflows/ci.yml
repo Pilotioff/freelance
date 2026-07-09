@@ -92,7 +92,7 @@ jobs:
       - name: Desplegar backend (pm2, puerto 3001)
         working-directory: freelance-estimator-backend
         env:
-          DATABASE_URL: postgresql://user:password@localhost:5432/freelance_estimator
+          DATABASE_URL: postgresql://postgres:12345@localhost:5432/freelance_estimator
           MONGODB_URI: mongodb://localhost:27017/freelance_estimator
           JWT_SECRET: deploy_local_secret_key
           PORT: 3001

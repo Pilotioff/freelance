@@ -298,3 +298,38 @@ export interface FiltrosClientes {
   pagina?: number;
   porPagina?: number;
 }
+
+export interface PromedioCategoria {
+  label: string;
+  valor: number;
+}
+
+export interface TecnologiaEvaluadaPerfil {
+  tecnologia: string;
+  label: string;
+  estrellas: number;
+}
+
+export interface EstadisticasPerfil {
+  cotizaciones_realizadas: number;
+  valor_promedio: number;
+  cantidad_clientes: number;
+  proyecto_mas_costoso: { nombre_proyecto: string; precio_final: number } | null;
+  tecnologias_mas_usadas: { tecnologia: string; cantidad: number }[];
+}
+
+export interface PerfilProfesional {
+  nombre: string;
+  avatar_url?: string;
+  nivel_detectado: string | null;
+  especialidad: string | null;
+  valor_hora_recomendado: number | null;
+  valor_hora_personalizado?: number;
+  tarifa_preferida: string;
+  fecha_ultima_evaluacion: string | null;
+  promedio_por_categoria: Record<string, PromedioCategoria>;
+  tecnologias_evaluadas: TecnologiaEvaluadaPerfil[];
+  confianza: number | null;
+  recomendaciones: string[];
+  estadisticas: EstadisticasPerfil;
+}

@@ -4,6 +4,7 @@ import {
   Calculator,
   FileText,
   Users,
+  UserCircle,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -15,6 +16,7 @@ const navItems = [
   { to: '/cotizador', label: 'Cotizador', icon: Calculator },
   { to: '/clientes', label: 'Clientes', icon: Users },
   { to: '/cotizaciones', label: 'Cotizaciones', icon: FileText },
+  { to: '/perfil', label: 'Perfil Profesional', icon: UserCircle },
 ];
 
 export function Sidebar() {

@@ -14,6 +14,7 @@ import { FreelancerExperienceModule } from './freelancer-experience/freelancer-e
 import { MarketComparisonModule } from './market-comparison/market-comparison.module';
 import { ExportacionModule } from './exportacion/exportacion.module';
 import { ClientesModule } from './clientes/clientes.module';
+import { PerfilProfesionalModule } from './perfil-profesional/perfil-profesional.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
@@ -35,6 +36,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
     MarketComparisonModule,
     ExportacionModule,
     ClientesModule,
+    PerfilProfesionalModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

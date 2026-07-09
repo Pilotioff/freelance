@@ -10,6 +10,7 @@ datasource db {
 model Cotizacion {
   id                       String                 @id @default(uuid())
   usuario_id               String
+  cliente_id               String?
   nombre_proyecto          String
   tipo_proyecto            String
   cantidad_paginas         Int
@@ -34,6 +35,7 @@ model Cotizacion {
   costo_bd                 Float?
   creado_en                DateTime               @default(now())
   tecnologias              CotizacionTecnologia[]
+  cliente                  Cliente?               @relation(fields: [cliente_id], references: [id], onDelete: SetNull)
 }
 
 model CotizacionTecnologia {
@@ -41,6 +43,26 @@ model CotizacionTecnologia {
   cotizacion_id String
   tecnologia    String
   cotizacion    Cotizacion @relation(fields: [cotizacion_id], references: [id], onDelete: Cascade)
+}
+
+model Cliente {
+  id             String       @id @default(uuid())
+  usuario_id     String
+  nombre         String
+  apellido       String
+  empresa        String?
+  correo         String?
+  telefono       String?
+  ciudad         String?
+  pais           String?
+  sitio_web      String?
+  linkedin       String?
+  tipo_cliente   String
+  observaciones  String?
+  activo         Boolean      @default(true)
+  creado_en      DateTime     @default(now())
+  actualizado_en DateTime     @updatedAt
+  cotizaciones   Cotizacion[]
 }
 
 model PesoSistema {

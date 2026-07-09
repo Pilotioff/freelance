@@ -73,6 +73,11 @@ export class CrearCotizacionDto {
   @IsIn([...PERFILES_CLIENTE], { message: 'Selecciona un perfil de cliente válido' })
   perfil_cliente!: string;
 
+  @ApiPropertyOptional({ example: 'a1b2c3d4-...' })
+  @IsOptional()
+  @IsString()
+  cliente_id?: string;
+
   @ApiPropertyOptional({ example: false })
   @IsOptional()
   @IsBoolean()

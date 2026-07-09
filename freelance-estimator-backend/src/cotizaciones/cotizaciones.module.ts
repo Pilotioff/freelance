@@ -3,9 +3,10 @@ import { CotizacionesController } from './cotizaciones.controller';
 import { CotizacionesService } from './cotizaciones.service';
 import { AuthModule } from '../auth/auth.module';
 import { DivisasModule } from '../divisas/divisas.module';
+import { ClientesModule } from '../clientes/clientes.module';
 
 @Module({
-  imports: [AuthModule, DivisasModule],
+  imports: [AuthModule, DivisasModule, ClientesModule],
   controllers: [CotizacionesController],
   providers: [CotizacionesService],
   exports: [CotizacionesService],

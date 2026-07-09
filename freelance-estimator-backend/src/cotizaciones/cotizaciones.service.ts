@@ -5,6 +5,7 @@ import { EstimarCotizacionDto } from './dto/estimar-cotizacion.dto';
 import { Cotizacion, Prisma } from '@prisma/client';
 import { AuthService } from '../auth/auth.service';
 import { DivisasService, Moneda } from '../divisas/divisas.service';
+import { ClientesService } from '../clientes/clientes.service';
 import { obtenerArquetipo } from './arquetipos';
 
 export interface CotizacionConTecnologias extends Cotizacion {
@@ -47,6 +48,7 @@ export class CotizacionesService {
     private readonly prisma: PrismaService,
     private readonly authService: AuthService,
     private readonly divisasService: DivisasService,
+    private readonly clientesService: ClientesService,
   ) {}
 
   private async obtenerTarifaHora(usuarioId: string): Promise<number> {
@@ -105,12 +107,20 @@ export class CotizacionesService {
   async crear(usuarioId: string, dto: CrearCotizacionDto): Promise<CotizacionConTecnologias> {
     const tarifaHora = await this.obtenerTarifaHora(usuarioId);
 
+    let perfilCliente = dto.perfil_cliente;
+    if (dto.cliente_id) {
+      const tipoCliente = await this.clientesService.obtenerTipoCliente(usuarioId, dto.cliente_id);
+      if (tipoCliente) {
+        perfilCliente = tipoCliente;
+      }
+    }
+
     const calculo = await this.calcular({
       tipo_proyecto: dto.tipo_proyecto,
       nivel_disenio: dto.nivel_disenio,
       tiempo_entrega: dto.tiempo_entrega,
       hosting: dto.hosting,
-      perfil_cliente: dto.perfil_cliente,
+      perfil_cliente: perfilCliente,
       cantidad_desarrolladores: dto.cantidad_desarrolladores,
       tarifaHora,
     });
@@ -132,6 +142,7 @@ export class CotizacionesService {
     const cotizacion = await this.prisma.cotizacion.create({
       data: {
         usuario_id: usuarioId,
+        cliente_id: dto.cliente_id,
         nombre_proyecto: dto.nombre_proyecto,
         tipo_proyecto: dto.tipo_proyecto,
         cantidad_paginas: dto.cantidad_paginas,
@@ -148,7 +159,7 @@ export class CotizacionesService {
         moneda_seleccionada: monedaSeleccionada,
         precio_convertido: precioConvertido,
         tasa_cambio_usada: tasaCambioUsada,
-        perfil_cliente: dto.perfil_cliente,
+        perfil_cliente: perfilCliente,
         margen_aplicado: calculo.margenPerfil,
         costo_diseno: calculo.costoDiseno,
         costo_frontend: calculo.costoFrontend,

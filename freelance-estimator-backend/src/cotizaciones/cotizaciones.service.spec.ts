@@ -3,6 +3,7 @@ import { CotizacionesService } from './cotizaciones.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthService } from '../auth/auth.service';
 import { DivisasService } from '../divisas/divisas.service';
+import { ClientesService } from '../clientes/clientes.service';
 import { NotFoundException } from '@nestjs/common';
 
 describe('CotizacionesService', () => {
@@ -63,6 +64,12 @@ describe('CotizacionesService', () => {
               resultado: valor * 0.00025,
               tasa: 0.00025,
             })),
+          },
+        },
+        {
+          provide: ClientesService,
+          useValue: {
+            obtenerTipoCliente: jest.fn(() => Promise.resolve(null)),
           },
         },
       ],

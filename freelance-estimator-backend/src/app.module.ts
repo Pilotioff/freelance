@@ -13,6 +13,7 @@ import { AdminModule } from './admin/admin.module';
 import { FreelancerExperienceModule } from './freelancer-experience/freelancer-experience.module';
 import { MarketComparisonModule } from './market-comparison/market-comparison.module';
 import { ExportacionModule } from './exportacion/exportacion.module';
+import { ClientesModule } from './clientes/clientes.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
@@ -33,6 +34,7 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
     FreelancerExperienceModule,
     MarketComparisonModule,
     ExportacionModule,
+    ClientesModule,
   ],
   providers: [
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

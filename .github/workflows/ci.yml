@@ -81,3 +81,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  deploy:
+    runs-on: self-hosted
+    needs: [backend, frontend, sonarcloud]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Levantar bases de datos locales
+        run: docker compose up -d postgres mongodb
+      - name: Desplegar backend (pm2, puerto 3001)
+        working-directory: freelance-estimator-backend
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/freelance_estimator
+          MONGODB_URI: mongodb://localhost:27017/freelance_estimator
+          JWT_SECRET: deploy_local_secret_key
+          PORT: 3001
+        run: |
+          npm ci
+          npx prisma generate
+          npx prisma migrate deploy
+          npm run build
+          pm2 restart freelance-backend --update-env || pm2 start dist/main.js --name freelance-backend --update-env
+      - name: Construir y desplegar frontend (pm2, puerto 4173)
+        working-directory: freelance-estimator-frontend
+        env:
+          VITE_API_URL: http://localhost:3001/api
+        run: |
+          npm ci
+          npm run build
+          pm2 restart freelance-frontend || pm2 serve dist 4173 --name freelance-frontend --spa
+      - name: Guardar lista de procesos pm2
+        run: pm2 save
